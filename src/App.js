@@ -36,7 +36,7 @@ const leg = (dis)=> (5*(dis**3)-(3*dis))/2
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
-const sig = (x) => x / ( PI**PI + Math.abs(x));
+const sig = (x) => x / ( .1 + Math.abs(x));
 const log = (x)=>1/(1+Math.exp(-x));
 const atan = (x)=>Math.atan(x)/(PI/2);
 const spheres = [];
