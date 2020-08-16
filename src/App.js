@@ -9,7 +9,7 @@ import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = (Math.PI);
 var renderer, scene, camera;
-var count = Math.pow(8, 3);
+var count = Math.pow(10, 3);
 var velx = new Array(count).fill(0);
 var vely = new Array(count).fill(0);
 var velz = new Array(count).fill(0);
@@ -68,7 +68,7 @@ function makeSphere() {
 
       transparent: true,
 
-      reflectivity: 55,
+      reflectivity: 255,
       //  bumpScale:5
     })
   );
@@ -212,7 +212,7 @@ function render() {
       const z = frnd(leg(sphere.position.z));
       var dis = frnd(leg((sphere.position.distanceTo(sphere1.position)))); // 
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
-      if(dis<=frnd(12/360))continue;
+      if(dis<=frnd(18/360))continue;
       var dirx =  frnd((sign(x1 - x)*4) / frnd(dis* dis*dis)); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
       var diry =  frnd((sign(y1 - y)*4) / frnd(dis* dis*dis)); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
       var dirz =  frnd((sign(z1 - z)*4) / frnd(dis* dis*dis)); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
@@ -222,14 +222,14 @@ function render() {
       // if (dis <= 1 && !hit[j][i]) {
       {
         // } else if (dis > 1)frnd(1/)
-        const s = .000001
+        const s = .00001
         const finx = (frnd((dirx) / frnd(dis)));
         const finy = (frnd((diry) / frnd(dis)));
         const finz = (frnd((dirz) / frnd(dis)));
         const gr =  ((sqrt(5.0) + 1.0) / 2.0); // golden ratio = 1.6180339887498948482
         const ga =  ((2.0 - gr) * (2.0 * PI)); // golden angle = 2.39996322972865332
         const lat = frnd(asin(-1.0 + (2.0 * (dis*360))/360 ));
-        const lon = frnd(ga * frnd(frnd(360/ga)*dis));
+        const lon = frnd(ga * frnd(frnd(1)*dis));
         
         velx[i] -= ((frnd(lon*dirx*s)));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
         vely[i] -= ((frnd(lon*diry*s)));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
