@@ -36,8 +36,8 @@ const leg = (x)=> x>0?(1-(1/(1+Math.abs(x)))-.5)*2:-(1-(1/(1+Math.abs(x)))-.5)*2
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
-const sig = (x) => x / ( PI*PI + Math.abs(x));
-const log = (x)=>(1/(1+Math.exp(-x))-.5)*2;
+const logg = (x) => x / ( PI + Math.abs(x));
+const sig = (x)=>(1/(1+Math.exp(-x))-.5)*2;
 const atan = (x)=>Math.atan(x)/(PI/2);
 const spheres = [];
 
@@ -48,7 +48,7 @@ animate();
 
 function makeSphere() {
   const sphere = new THREE.Line(
-    new THREE.SphereBufferGeometry(16, 16, 16),
+    new THREE.SphereBufferGeometry(16, 8, 8),
 
     new THREE.MeshPhongMaterial({
         color:0x7a7a7a
@@ -84,9 +84,9 @@ function init() {
     10000000000000
   );
 
-  camera.position.y = 1024.0;
-  camera.position.z = 1024.0;
-  camera.position.x = 1024.0;
+  camera.position.y = 512.0;
+  camera.position.z = 512.0;
+  camera.position.x = 512.0;
 var color = 0x280000 ;
   scene = new THREE.Scene();
   var light = new THREE.PointLight(color, 2, 100, 0);
@@ -187,56 +187,54 @@ function render() {
   var bounce = false,
     bcount = 0;
   var avgx, avgy, avgz, bavgx, bavgy, bavgz;
-  const r = 1 / size; //Math.sqrt(Math.PI); //*.1;
+  const r = 1 / size; 
   var sphere1, sphere;
 
   const r1 = 0.00001;
-  Array(Max).fill(0, 0, size);
-  Array(Min).fill(9999, 0, size);
+ 
 
-  // Min = new Array(size).fill(9999);//Array(Max).fill(0,0,size);
-  // Min.fill(999999,0,size);S
-  var closestx, closesty, closestz, closest;
-  // alert(Min);
-  // spheres.rotateOnAxis(new THREE.Vector3(1, 1, 1), 0.5);
-  for (let i = 1; i < size; i++) {
+  
+  for (let i = 0; i < size; i++) {
     sphere1 = spheres[i];
-    const x1 = frnd(leg(sphere1.position.x));
-    const y1 = frnd(leg(sphere1.position.y));
-    const z1 = frnd(leg(sphere1.position.z));
+    const x1 = frnd(sig(sphere1.position.x));
+    const y1 = frnd(sig(sphere1.position.y));
+    const z1 = frnd(sig(sphere1.position.z));
     for (var j = i - 1; j >= 0; j--) {
       sphere = spheres[j];
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
-      const x = frnd(leg(sphere.position.x));
-      const y = frnd(leg(sphere.position.y));
-      const z = frnd(leg(sphere.position.z));
-      var dis = frnd(leg((sphere.position.distanceTo(sphere1.position)))); // 
+      const x = frnd(sig(sphere.position.x));
+      const y = frnd(sig(sphere.position.y));
+      const z = frnd(sig(sphere.position.z));
+      var dis = frnd(sig((sphere.position.distanceTo(sphere1.position)))); // 
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
-      if(dis<=frnd(18/360))continue;
-      var dirx =  frnd((sign(x1 - x)*4) / frnd(dis* dis*dis)); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry =  frnd((sign(y1 - y)*4) / frnd(dis* dis*dis)); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz =  frnd((sign(z1 - z)*4) / frnd(dis* dis*dis)); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      if(dis<=(1/360)||dis>1)continue;
+      var dirx =  (sign(x1 - x));//));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry =  (sign(y1 - y));//));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz =  (sign(z1 - z));//));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
       // dirx = (3*(dirx**2)-(1))/2;
       // diry = (3*(diry**2)-(1))/2;
       // dirz = (3*(dirz**2)-(1))/2;
       // if (dis <= 1 && !hit[j][i]) {
       {
         // } else if (dis > 1)frnd(1/)
-        const s = .00001
-        const finx = (frnd((dirx) / frnd(dis)));
-        const finy = (frnd((diry) / frnd(dis)));
-        const finz = (frnd((dirz) / frnd(dis)));
+        const s =   -(10);
         const gr =  ((sqrt(5.0) + 1.0) / 2.0); // golden ratio = 1.6180339887498948482
         const ga =  ((2.0 - gr) * (2.0 * PI)); // golden angle = 2.39996322972865332
-        const lat = frnd(asin(-1.0 + (2.0 * (dis*360))/360 ));
-        const lon = frnd(ga * frnd(frnd(1)*dis));
-        
-        velx[i] -= ((frnd(lon*dirx*s)));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
-        vely[i] -= ((frnd(lon*diry*s)));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
-        velz[i] -= ((frnd(lon*dirz*s)));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
-        velx[j] += ((frnd(lon*dirx*s)));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
-        vely[j] += ((frnd(lon*diry*s)));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
-        velz[j] += ((frnd(lon*dirz*s)));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
+        const scale = frnd((360*dis*gr/2));
+        dirx = (frnd((dirx) / scale));
+        diry = (frnd((diry) / scale));
+        dirz = (frnd((dirz) / scale));
+        var lat = frnd(asin(-1.0 + (2.0 * round(dis*360))/round(360) ));
+        var lon = frnd((ga * round(dis*360)));
+        lat  *= PI/180; 
+        lon  *= PI/180; 
+        var rot = (frnd(cos(lon)*sin(lat)));
+        velx[i] -= (frnd(rot*(dirx*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
+        vely[i] -= (frnd(rot*(diry*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
+        velz[i] -= (frnd(rot*(dirz*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
+        velx[j] += (frnd(rot*(dirx*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
+        vely[j] += (frnd(rot*(diry*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
+        velz[j] += (frnd(rot*(dirz*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
       
       }
     }
