@@ -9,7 +9,7 @@ import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = (Math.PI);
 var renderer, scene, camera;
-var count = Math.pow(10, 3);
+var count = Math.pow(8, 3);
 var velx = new Array(count).fill(0);
 var vely = new Array(count).fill(0);
 var velz = new Array(count).fill(0);
@@ -32,7 +32,7 @@ const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x)=>Math.round(x);
-const leg = (x)=> x>0?(1-(1/(1+Math.abs(x)))-.5)*2:-(1-(1/(1+Math.abs(x)))-.5)*2;
+const leg = (x)=> x>0?(1-(PI/(PI+Math.abs(x)))-.5)*2:-(1-(PI/(PI+Math.abs(x)))-.5)*2;
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
@@ -208,27 +208,27 @@ function render() {
       var dis = frnd(sig((sphere.position.distanceTo(sphere1.position)))); // 
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
       if(dis<=(1/360)||dis>1)continue;
-      var dirx =  (sign(x1 - x));//));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry =  (sign(y1 - y));//));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz =  (sign(z1 - z));//));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      var dirx =  ((x1 - x));//));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry =  ((y1 - y));//));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz =  ((z1 - z));//));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
       // dirx = (3*(dirx**2)-(1))/2;
       // diry = (3*(diry**2)-(1))/2;
       // dirz = (3*(dirz**2)-(1))/2;
       // if (dis <= 1 && !hit[j][i]) {
       {
         // } else if (dis > 1)frnd(1/)
-        const s =   -(10);
+        const s =   (100/size);
         const gr =  ((sqrt(5.0) + 1.0) / 2.0); // golden ratio = 1.6180339887498948482
         const ga =  ((2.0 - gr) * (2.0 * PI)); // golden angle = 2.39996322972865332
-        const scale = frnd((360*dis*gr/2));
+        const scale = frnd((360*dis*dis*gr));
         dirx = (frnd((dirx) / scale));
         diry = (frnd((diry) / scale));
         dirz = (frnd((dirz) / scale));
-        var lat = frnd(asin(-1.0 + (2.0 * round(dis*360))/round(360) ));
-        var lon = frnd((ga * round(dis*360)));
-        lat  *= PI/180; 
+        var lat = frnd(asin(-1.0 + (2.0 * frnd(dis*360))/frnd(360) ));
+        var lon = frnd((ga * frnd(dis*360)));
+        lat  *= 2*PI/180; 
         lon  *= PI/180; 
-        var rot = (frnd(cos(lon)*sin(lat)));
+        var rot = (frnd(cos(lat)*sin(lon)));
         velx[i] -= (frnd(rot*(dirx*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
         vely[i] -= (frnd(rot*(diry*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
         velz[i] -= (frnd(rot*(dirz*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
