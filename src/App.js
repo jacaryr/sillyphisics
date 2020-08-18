@@ -217,46 +217,39 @@ function render() {
       // if (dis <= 1 && !hit[j][i]) {
       {
         // } else if (dis > 1)frnd(1/)
-        const s =   (100/size);
+        const s =   -(10/size);
         const gr =  ((sqrt(5.0) + 1.0) / 2.0); // golden ratio = 1.6180339887498948482
         const ga =  ((2.0 - gr) * (2.0 * PI)); // golden angle = 2.39996322972865332
         const scale = frnd((360*dis*dis*gr));
-        dirx = (frnd((dirx) / scale));
-        diry = (frnd((diry) / scale));
-        dirz = (frnd((dirz) / scale));
+        dirx = (frnd((dirx) / 1));
+        diry = (frnd((diry) / 1));
+        dirz = (frnd((dirz) / 1));
         var lat = frnd(asin(-1.0 + (2.0 * frnd(dis*360))/frnd(360) ));
         var lon = frnd((ga * frnd(dis*360)));
-        lat  *= 2*PI/180; 
+        lat  *= PI/180; 
         lon  *= PI/180; 
-        var rot = (frnd(cos(lat)*sin(lon)));
-        velx[i] -= (frnd(rot*(dirx*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
-        vely[i] -= (frnd(rot*(diry*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
-        velz[i] -= (frnd(rot*(dirz*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
-        velx[j] += (frnd(rot*(dirx*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finx) * Math.cos(finx)); //360 * (Math.sin((finx * PI) / 180)*(Math.cos((finx * PI*2) / 180)))); //-Math.cos((finx*PI*2)/180)*-Math.sin((finx*PI)/180)*360);
-        vely[j] += (frnd(rot*(diry*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finy) * Math.cos(finy)); //360 * (Math.sin((finy * PI) / 180)*(Math.cos((finy * PI*2) / 180)))); //-Math.cos((finy*PI*2)/180)*-Math.sin((finy*PI)/180)*360);
-        velz[j] += (frnd(rot*(dirz*s)));//*cos(lat)*sin(lon)*s))));//Math.sin(2 * finz) * Math.cos(finz)); //360 * (Math.sin((finz * PI) / 180)*(Math.cos((finz * PI*2) / 180)))); //-Math.cos((finz*PI*2)/180)*-Math.sin((finz*PI)/180)*360);
+        var rot = (frnd(sin(lat)*cos(lon)));
+        velx[i] -= (frnd(rot*(dirx*s)));
+        vely[i] -= (frnd(rot*(diry*s)));
+        velz[i] -= (frnd(rot*(dirz*s)));
+        velx[j] += (frnd(rot*(dirx*s)));
+        vely[j] += (frnd(rot*(diry*s)));
+        velz[j] += (frnd(rot*(dirz*s)));
       
       }
     }
   }
       for (let ndx1 = 0; ndx1 < size; ndx1++) {
         sphere1 = spheres[ndx1];
-        // velx[ndx1] = frnd(.9999 * velx[ndx1]);
-        // vely[ndx1] = frnd(.9999 * vely[ndx1]);
-        // velz[ndx1] = frnd(.9999 * velz[ndx1]);
+        velx[ndx1] = frnd(.9999 * velx[ndx1]);
+        vely[ndx1] = frnd(.9999 * vely[ndx1]);
+        velz[ndx1] = frnd(.9999 * velz[ndx1]);
     
         sphere1.translateX(frnd(velx[ndx1]));
         sphere1.translateY(frnd(vely[ndx1]));
         sphere1.translateZ(frnd(velz[ndx1]));
-        // sphere1.rotateOnAxis(new THREE.Vector3(1, 0, 0), (velx[ndx1]));
-        // sphere1.rotateOnAxis(new THREE.Vector3(0, 1, 0), (vely[ndx1]));
-        // sphere1.rotateOnAxis(new THREE.Vector3(0, 0, 1), (velz[ndx1]));
         // Array(hit[ndx1]).fill(false,0,size);
       }
-  // camera.translateX(-.1);
-  // camera.translateY(-.1);
-  //
-  // }
 
   renderer.render(scene, camera);
   controls.update();
