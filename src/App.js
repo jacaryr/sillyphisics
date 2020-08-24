@@ -26,7 +26,7 @@ var move = false;
 var controls;
 
 var stats, tempsphere;
-const frnd = (x) => Math.fround(x);
+const frnd = (x) => Math.trunc(x*1e9)/1e9;
 const tanh = (x) => Math.tanh(x);
 const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
@@ -49,7 +49,15 @@ var start = Date.now();
 init();
 
 animate();
+class Sphere {  // Sphere class
+  constructor() {  // Class constructor
+    this.sphere = new makeSphere();  // properties
+    this.x = this.sphere.position.x;
+    this.y = this.sphere.position.y;
+    this.z = this.sphere.position.z;
 
+  }
+}
 function makeSphere() {
   const sphere = new THREE.Line(
     new THREE.SphereBufferGeometry(4, 16, 16),
@@ -169,18 +177,19 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 var step = false;
+
 function animate() {
-  stats.update();
-  // setTimeout(
-  //   () => {
-  //     // stats.begin();
-  //   },
-  //   (1000 / 60) * step == false ? 2 : (step = true),
-  //   1
-  //   );
-  requestAnimationFrame(animate);
-  // step = true;
-  render();
+  setTimeout(
+    () => {
+      requestAnimationFrame(animate);
+      render();
+      stats.update();
+      // stats.begin();
+    },
+    (1000 / 30) * step == false ? 2 : (step = true),
+          1
+          );
+          step = true;
   // stats.end();
 }
 
@@ -246,6 +255,7 @@ function render() {
       
     }
     }
+
   }
 
   renderer.render(scene, camera);
