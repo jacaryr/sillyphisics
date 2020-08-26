@@ -57,7 +57,7 @@ function makeSphere() {
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
       
-      fog: true,
+      // fog: true,
 
       blending: THREE.NormalBlending,
 
@@ -207,7 +207,7 @@ function render() {
       const x = frnd(sphere.position.x);
       const y = frnd(sphere.position.y);
       const z = frnd(sphere.position.z);
-      var dis = frnd(sig(sphere1.position.distanceTo(sphere.position))); //
+      var dis = frnd(leg(sphere1.position.distanceTo(sphere.position))); //
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
       // if (dis <= 0.25) continue;
       // dis = (dis - 0.25) /  (1-0.25);
@@ -219,17 +219,17 @@ function render() {
       var diry = frnd(sign(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
       var dirz = frnd(sign(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
   
-        const s = (1e-7 / size)/2;
+        const s = (1e-8 / size)/2;
         const qbccir = 1 ** (1 / 2);
-        const scale = frnd(dis**(3));//dis*dis);
+        const scale = frnd(dis**(1/3));//dis*dis);
         if (round(360*scale)===0)continue;
         const dix = frnd(dirx * (round(scale*360)));
         const diy = frnd(diry * (round(scale*360)));
         const diz = frnd(dirz * (round(scale*360)));
         var lat = frnd(asin(-1.0 + (2.0 * round( 360*(dis**(1/3)))) / 360));
         var lon = frnd(2.4* round(360*(dis**(1/3))));
-        lat *= 2.4;//frnd(2*(2.4*PI / 180));
-        lon *= 1;//frnd(2*(PI / 180));
+        lat *= 2*2.4;//frnd(2*(2.4*PI / 180));
+        lon *= 2*1;//frnd(2*(PI / 180));
         var rot=frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
         velx[i] -=  frnd((round(gr*dix*1e7) * s) + frnd(round(1*rot * dirx*1e7) * s));
         vely[i] -=  frnd((round(gr*diy*1e7) * s) + frnd(round(1*rot * diry*1e7) * s));
