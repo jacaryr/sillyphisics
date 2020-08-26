@@ -93,7 +93,7 @@ function init() {
   var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(0.0, 1000000, 1000000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 5, 100, 0);
+  var light = new THREE.PointLight(color,5, 100, 0);
   light.position.set(0.0, -1000000, -1000000.0);
   scene.add(light);
   var light = new THREE.PointLight(color, 5, 100, 0);
@@ -102,7 +102,7 @@ function init() {
   var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(-1000000.0, -1000000, 0.0);
   scene.add(light);
-  var light = new THREE.PointLight(0x0000f0, 8, 100, 0);
+  var light = new THREE.PointLight(0x0f00f0, 255, 100, 0);
   light.position.set(0.0, 0.0, 0.0);
   scene.add(light);
 
