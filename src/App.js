@@ -51,8 +51,8 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Points(
-    new THREE.SphereBufferGeometry(2, 8, 8),
+  const sphere = new THREE.LineSegments(
+    new THREE.SphereBufferGeometry(2, 16, 16),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
@@ -65,7 +65,7 @@ function makeSphere() {
 
       reflectivity: 255,
       //  bumpScale:5
-    })
+    }),1
   );
   return sphere;
 }
