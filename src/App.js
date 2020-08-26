@@ -4,7 +4,7 @@ import { complex } from "mathjs";
 import "./App.css";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
-import { Vector3, PixelFormat } from "three";
+import { Vector3, PixelFormat, Vector4 } from "three";
 import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
@@ -26,13 +26,13 @@ var move = false;
 var controls;
 
 var stats, tempsphere;
-const frnd = (x) => Math.trunc(x*1e9)/1e9;
+const frnd = (x) => Math.fround(x);
 const tanh = (x) => Math.tanh(x);
 const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x) => Math.round(x);
-const sigscaler = PI**PI;
+const sigscaler = PI;
 const sig = (x) =>
   x > 0
     ? 1 - sigscaler / (sigscaler + Math.abs(x))
@@ -49,29 +49,14 @@ var start = Date.now();
 init();
 
 animate();
-class Sphere {  // Sphere class
-  constructor() {  // Class constructor
-    this.sphere = new makeSphere();  // properties
-    this.x = this.sphere.position.x;
-    this.y = this.sphere.position.y;
-    this.z = this.sphere.position.z;
 
-  }
-}
 function makeSphere() {
-  const sphere = new THREE.Line(
-    new THREE.SphereBufferGeometry(4, 16, 16),
+  const sphere = new THREE.Points(
+    new THREE.SphereBufferGeometry(2, 8, 8),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
-      //     (Math.random() * (255*255)%255
-
-      // ),(Math.random() * (255*255)%255
-
-      // ),(Math.random() * (255*255)%255
-
-      // flatShading: true,
-
+      
       fog: true,
 
       blending: THREE.NoBlending,
@@ -99,25 +84,25 @@ function init() {
   camera.position.x = 512.0;
   var color = 0x280000;
   scene = new THREE.Scene();
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(1000000.0, 1000000, 1000000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(-1000000.0, 0, -1000000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(0.0, 1000000, 1000000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(0.0, -1000000, -1000000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(1000000.0, 1000000, 0.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 2, 100, 0);
+  var light = new THREE.PointLight(color, 5, 100, 0);
   light.position.set(-1000000.0, -1000000, 0.0);
   scene.add(light);
-  var light = new THREE.PointLight(0x0000f0, 4, 100, 0);
+  var light = new THREE.PointLight(0x0000f0, 8, 100, 0);
   light.position.set(0.0, 0.0, 0.0);
   scene.add(light);
 
@@ -138,9 +123,9 @@ function init() {
         const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
         const theta = Math.atan2(rhat, kk);
         const time = parseInt(d.getTime());
-        tempsphere.position.x = 32 * ii;
-        tempsphere.position.y = 32 * jj;
-        tempsphere.position.z = 32 * kk;
+        tempsphere.position.x = 64 * ii;
+        tempsphere.position.y = 64 * jj;
+        tempsphere.position.z = 64 * kk;
 
         spheres.push(tempsphere);
         scene.add(tempsphere);
@@ -177,37 +162,37 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 var step = false;
-
 function animate() {
-  setTimeout(
-    () => {
+  stats.update();
+  // setTimeout(
+  //   () => {
+      stats.begin();
       requestAnimationFrame(animate);
       render();
-      stats.update();
-      // stats.begin();
-    },
-    (1000 / 30) * step == false ? 2 : (step = true),
-          1
-          );
-          step = true;
-  // stats.end();
+    // },
+    // (1000 / 30) * step == false ? 2 : (step = false),
+    // 1
+    // );
+    // step = true;
+  stats.end();
 }
 
 function render() {
   var size = spheres.length;
-  var bounce = false,
-    bcount = 0;
-  var avgx, avgy, avgz, bavgx, bavgy, bavgz;
-  const r = 1 / size;
   var sphere1, sphere;
 
-  const r1 = 0.00001;
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
     sphere1 = spheres[ndx1];
-    // velx[ndx1] = frnd(.9999 * velx[ndx1]);
-    sphere1.translateX(1 * frnd(velx[ndx1]));
-    sphere1.translateY(1 * frnd(vely[ndx1]));
-    sphere1.translateZ(1 * frnd(velz[ndx1]));
+    // const x1 = frnd((sphere1.position.x));
+    // const y1 = frnd((sphere1.position.y));
+    // const z1 = frnd((sphere1.position.z));
+    // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
+    velx[ndx1] = frnd(.99999 * velx[ndx1]);
+    vely[ndx1] = frnd(.99999 * vely[ndx1]);
+    velz[ndx1] = frnd(.99999 * velz[ndx1]);
+    sphere1.translateX( frnd(.01*velx[ndx1]));
+    sphere1.translateY( frnd(.01*vely[ndx1]));
+    sphere1.translateZ( frnd(.01*velz[ndx1]));
     // Array(hit[ndx1]).fill(false,0,size);
   }
 
@@ -216,7 +201,7 @@ function render() {
     const x1 = frnd(sphere1.position.x);
     const y1 = frnd(sphere1.position.y);
     const z1 = frnd(sphere1.position.z);
-    for (var j = i - 1; j >= 0; j--) {
+    for (var j = i ; j >= 0; j--) {
       sphere = spheres[j];
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
       const x = frnd(sphere.position.x);
@@ -224,39 +209,39 @@ function render() {
       const z = frnd(sphere.position.z);
       var dis = frnd(sig(sphere1.position.distanceTo(sphere.position))); //
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
-      if (dis <= 0.241) continue;
-      dis = (dis - 0.241) /  (1-0.241);
-      if (dis >= .0/(360)) {
+      // if (dis <= 0.25) continue;
+      // dis = (dis - 0.25) /  (1-0.25);
+      // if ((360*(1-dis**(2))) >= 90/360) {
 
-      const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
-      const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var dirx = frnd(sig(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry = frnd(sig(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz = frnd(sig(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      const gr = 1.6;//round(1e16*(sqrt(5.0) + 1.0) / 2.0)*1e-16; // golden ratio = 1.6180339887498948482
+      const ga = round(1e16*(2.0 - gr) * (2.0 * PI))*1e-16; // golden angle = 2.39996322972865332
+      var dirx = frnd(sign(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry = frnd(sign(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz = frnd(sign(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
   
-        const s = 10e-4 / 360;
-        const qbccir = 1 ** (1 / 3);
-        const scale = frnd(dis*dis*dis);//dis*dis);
-        if (round(150*scale)==0)continue;
-        const dix = frnd(dirx / (round(scale*150)));
-        const diy = frnd(diry / (round(scale*150)));
-        const diz = frnd(dirz / (round(scale*150)));
-        var lat = frnd(asin(-1.0 + (2.0 * round( 150*dis)) / 150));
-        var lon = frnd(2.4* round(150*dis));
-        lat *= frnd((2.4*PI / 180));
-        lon *= frnd((PI / 180));
-        var rot = frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
-        velx[i] -=  frnd((round( gr*dix*1e3) * s) + (round(rot * dirx*1e4) * s));
-        vely[i] -=  frnd((round( gr*diy*1e3) * s) + (round(rot * diry*1e4) * s));
-        velz[i] -=  frnd((round( gr*diz*1e3) * s) + (round(rot * dirz*1e4) * s));
-        velx[j] +=  frnd((round( gr*dix*1e3) * s) + (round(rot * dirx*1e4) * s));
-        vely[j] +=  frnd((round( gr*diy*1e3) * s) + (round(rot * diry*1e4) * s));
-        velz[j] +=  frnd((round( gr*diz*1e3) * s) + (round(rot * dirz*1e4) * s));
-      
+        const s = (1e-7 / size)/2;
+        const qbccir = 1 ** (1 / 2);
+        const scale = frnd(dis**(3));//dis*dis);
+        if (round(360*scale)===0)continue;
+        const dix = frnd(dirx * (round(scale*360)));
+        const diy = frnd(diry * (round(scale*360)));
+        const diz = frnd(dirz * (round(scale*360)));
+        var lat = frnd(asin(-1.0 + (2.0 * round( 360*(dis**(1/3)))) / 360));
+        var lon = frnd(2.4* round(360*(dis**(1/3))));
+        lat *= 2.4;//frnd(2*(2.4*PI / 180));
+        lon *= 1;//frnd(2*(PI / 180));
+        var rot=frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
+        velx[i] -=  frnd((round(gr*dix*1e7) * s) + frnd(round(1*rot * dirx*1e7) * s));
+        vely[i] -=  frnd((round(gr*diy*1e7) * s) + frnd(round(1*rot * diry*1e7) * s));
+        velz[i] -=  frnd((round(gr*diz*1e7) * s) + frnd(round(1*rot * dirz*1e7) * s));
+        velx[j] +=  frnd((round(gr*dix*1e7) * s) + frnd(round(1*rot * dirx*1e7) * s));
+        vely[j] +=  frnd((round(gr*diy*1e7) * s) + frnd(round(1*rot * diry*1e7) * s));
+        velz[j] +=  frnd((round(gr*diz*1e7) * s) + frnd(round(1*rot * dirz*1e7) * s));
+    
+    // }
     }
-    }
-
   }
+  step=false;
 
   renderer.render(scene, camera);
   controls.update();
