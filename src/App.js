@@ -59,7 +59,7 @@ function makeSphere() {
       
       fog: true,
 
-      blending: THREE.NoBlending,
+      blending: THREE.NormalBlending,
 
       transparent: true,
 
