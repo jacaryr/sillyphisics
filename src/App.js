@@ -9,7 +9,7 @@ import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
 var renderer, scene, camera;
-var count = Math.pow(9, 3);
+var count = Math.pow(8, 3);
 var velx = new Array(count).fill(0);
 var vely = new Array(count).fill(0);
 var velz = new Array(count).fill(0);
@@ -33,14 +33,11 @@ const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x) => Math.round(x);
 const modtanh = (x)=> 0>x?(Math.E**(2*x)-1)/(Math.E**(2*-x)+1):-(Math.E**(2*x)-1)/(Math.E**(2*-x)+1);
-const erf = (x) => 0<x?Math.exp(Math.fround(1/-x)):-Math.exp(Math.fround(1/-x));
+const erf = (x) => x>0?Math.exp(Math.fround(1/-x)):x!=0?-Math.exp(Math.fround(1/x)):0;
 
 const sigscaler = Math.fround(1);
 const leg = (x) => x / (sigscaler + Math.abs(x));
-const sig = (x) =>
-  x > 0
-    ? 1 - sigscaler / (sigscaler + Math.abs(x))
-    : -(1 - sigscaler / (sigscaler + Math.abs(x)));
+const sig = (x) => 1/(1+Math.E**(-x))
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
@@ -55,7 +52,7 @@ animate();
 
 function makeSphere() {
   const sphere = new THREE.LineSegments(
-    new THREE.SphereBufferGeometry(16, 16, 16),
+    new THREE.SphereBufferGeometry(2, 16, 16),
 
     new THREE.MeshPhongMaterial({
       color: 0xfffff,// 0x7a7a7a,
@@ -74,7 +71,7 @@ function makeSphere() {
 }
 function init() {
   camera = new THREE.PerspectiveCamera(
-    40,
+    50,
 
     window.innerWidth / window.innerHeight,
 
@@ -126,9 +123,9 @@ function init() {
         const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
         const theta = Math.atan2(rhat, kk);
         const time = parseInt(d.getTime());
-        tempsphere.position.x = 1280 * ii;
-        tempsphere.position.y = 1280 * jj;
-        tempsphere.position.z = 1280 * kk;
+        tempsphere.position.x = 12 * ii;
+        tempsphere.position.y = 12 * jj;
+        tempsphere.position.z = 12 * kk;
 
         spheres.push(tempsphere);
         scene.add(tempsphere);
@@ -183,14 +180,28 @@ function animate() {
 function render() {
   var size = spheres.length;
   var sphere1, sphere;
+    for (let ndx1 = 0; ndx1 < size; ndx1++) {
+      sphere1 = spheres[ndx1];
+      // const x1 = frnd((sphere1.position.x));
+      // const y1 = frnd((sphere1.position.y));
+      // const z1 = frnd((sphere1.position.z));
+      // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
+      // velx[ndx1] = frnd(.99999 * velx[ndx1]);
+      // vely[ndx1] = frnd(.99999 * vely[ndx1]);
+      // velz[ndx1] = frnd(.99999 * velz[ndx1]);
+      sphere1.translateX( (.01*(velx[ndx1])));
+      sphere1.translateY( (.01*(vely[ndx1])));
+      sphere1.translateZ( (.01*(velz[ndx1])));
+      // Array(hit[ndx1]).fill(false,0,size);
+    }
 
   
-  for (let i = 0; i < size; i++) {
+  for (let i = 1; i < size; i++) {
     sphere1 = spheres[i];
     const x1 = frnd(sphere1.position.x);
     const y1 = frnd(sphere1.position.y);
     const z1 = frnd(sphere1.position.z);
-    for (var j = i-1 ; j >= 0; j--) {
+    for (var j = i-1 ; j >= 0; --j) {
       sphere = spheres[j];
       if(i==j)continue;
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
@@ -205,48 +216,37 @@ function render() {
       const mid = Math.hypot(x1-x,y1-y,z1-z);
       const gr = 1.6//round(1e16*(sqrt(5.0) + 1.0) / 2.0)*1e-16; // golden ratio = 1.6180339887498948482
       const ga = round(1e16*(2.0 - gr) * (2.0 * PI))*1e-16; // golden angle = 2.39996322972865332
+      const qbccir = 1 ** (1 / 2);
+      
+      const s = (1e-4 );
+      
+      dis = frnd(sig(mid));
       var dirx = frnd(sign(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
       var diry = frnd(sign(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
       var dirz = frnd(sign(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      dis = frnd(erf(mid));
-      const s = (1e-8 )/2;
-      const qbccir = 1 ** (1 / 2);
       const scale = frnd((Math.pow(dis,2)));//dis*dis);
       if (round(scale*360)===0)continue;
-      const dix = frnd(dirx / (round(scale*360)));
-      const diy = frnd(diry / (round(scale*360)));
-      const diz = frnd(dirz / (round(scale*360)));
-      var lat = frnd(asin(-1.0 + (2.0 * round( 360*(scale))) / 360));
-      var lon = frnd(2.4* round(360*(scale)));
-      lat *= 2.4;//frnd(2*(2.4*PI / 180));
-      lon *= 1;//frnd(2*(PI / 180));
+     
+      const dix = frnd(dirx * (round((scale)*360)));
+      const diy = frnd(diry * (round((scale)*360)));
+      const diz = frnd(dirz * (round((scale)*360)));
+      var lat = frnd(asin(-1.0 + (2.0 * round( 360*(1-scale))) / 360));
+      var lon = frnd(2.4* round(360*(1-scale)));
+      lat *= frnd((2.4*PI / 180));
+      lon *= frnd((PI / 180));
       var rot= -frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
-      velx[i] -=  frnd(((gr*dix*1e9) * s) + frnd((1*rot * dirx*1e9) * s));
-      vely[i] -=  frnd(((gr*diy*1e9) * s) + frnd((1*rot * diry*1e9) * s));
-      velz[i] -=  frnd(((gr*diz*1e9) * s) + frnd((1*rot * dirz*1e9) * s));
-      velx[j] +=  frnd(((gr*dix*1e9) * s) + frnd((1*rot * dirx*1e9) * s));
-      vely[j] +=  frnd(((gr*diy*1e9) * s) + frnd((1*rot * diry*1e9) * s));
-      velz[j] +=  frnd(((gr*diz*1e9) * s) + frnd((1*rot * dirz*1e9) * s));
+      velx[i] -=  frnd(((gr*dix*1e2) * s) + frnd((1*rot * dirx*1e2) * s));
+      vely[i] -=  frnd(((gr*diy*1e2) * s) + frnd((1*rot * diry*1e2) * s));
+      velz[i] -=  frnd(((gr*diz*1e2) * s) + frnd((1*rot * dirz*1e2) * s));
+      velx[j] +=  frnd(((gr*dix*1e2) * s) + frnd((1*rot * dirx*1e2) * s));
+      vely[j] +=  frnd(((gr*diy*1e2) * s) + frnd((1*rot * diry*1e2) * s));
+      velz[j] +=  frnd(((gr*diz*1e2) * s) + frnd((1*rot * dirz*1e2) * s));
       
       // }
     }
   }
   step=false;
   
-  for (let ndx1 = 0; ndx1 < size; ndx1++) {
-    sphere1 = spheres[ndx1];
-    // const x1 = frnd((sphere1.position.x));
-    // const y1 = frnd((sphere1.position.y));
-    // const z1 = frnd((sphere1.position.z));
-    // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
-    // velx[ndx1] = frnd(.99999 * velx[ndx1]);
-    // vely[ndx1] = frnd(.99999 * vely[ndx1]);
-    // velz[ndx1] = frnd(.99999 * velz[ndx1]);
-    sphere1.translateX( frnd(1*(velx[ndx1])));
-    sphere1.translateY( frnd(1*(vely[ndx1])));
-    sphere1.translateZ( frnd(1*(velz[ndx1])));
-    // Array(hit[ndx1]).fill(false,0,size);
-  }
   renderer.render(scene, camera);
 controls.update();
 stats.update();
