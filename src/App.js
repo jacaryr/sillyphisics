@@ -218,29 +218,29 @@ function render() {
       const ga = round(1e16*(2.0 - gr) * (2.0 * PI))*1e-16; // golden angle = 2.39996322972865332
       const qbccir = 1 ** (1 / 2);
       
-      const s = (1e-4 );
+      const s = (1e-7 );
       
-      dis = frnd(sig(mid));
-      var dirx = frnd(sign(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry = frnd(sign(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz = frnd(sign(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      dis = frnd(erf(mid));
+      var dirx = frnd(tanh(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry = frnd(tanh(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz = frnd(tanh(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
       const scale = frnd((Math.pow(dis,2)));//dis*dis);
       if (round(scale*360)===0)continue;
      
-      const dix = frnd(dirx * (round((scale)*360)));
-      const diy = frnd(diry * (round((scale)*360)));
-      const diz = frnd(dirz * (round((scale)*360)));
+      const dix = frnd(dirx / (round((scale)*360)));
+      const diy = frnd(diry / (round((scale)*360)));
+      const diz = frnd(dirz / (round((scale)*360)));
       var lat = frnd(asin(-1.0 + (2.0 * round( 360*(1-scale))) / 360));
       var lon = frnd(2.4* round(360*(1-scale)));
-      lat *= frnd((2.4*PI / 180));
-      lon *= frnd((PI / 180));
+      lat *= frnd(2*(2.4*PI / 180));
+      lon *= frnd(2*(PI / 180));
       var rot= -frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
-      velx[i] -=  frnd(((gr*dix*1e2) * s) + frnd((1*rot * dirx*1e2) * s));
-      vely[i] -=  frnd(((gr*diy*1e2) * s) + frnd((1*rot * diry*1e2) * s));
-      velz[i] -=  frnd(((gr*diz*1e2) * s) + frnd((1*rot * dirz*1e2) * s));
-      velx[j] +=  frnd(((gr*dix*1e2) * s) + frnd((1*rot * dirx*1e2) * s));
-      vely[j] +=  frnd(((gr*diy*1e2) * s) + frnd((1*rot * diry*1e2) * s));
-      velz[j] +=  frnd(((gr*diz*1e2) * s) + frnd((1*rot * dirz*1e2) * s));
+      velx[i] -=  frnd(((gr*dix*1e6) * s) + frnd((1*rot * dirx*1e6) * s));
+      vely[i] -=  frnd(((gr*diy*1e6) * s) + frnd((1*rot * diry*1e6) * s));
+      velz[i] -=  frnd(((gr*diz*1e6) * s) + frnd((1*rot * dirz*1e6) * s));
+      velx[j] +=  frnd(((gr*dix*1e6) * s) + frnd((1*rot * dirx*1e6) * s));
+      vely[j] +=  frnd(((gr*diy*1e6) * s) + frnd((1*rot * diry*1e6) * s));
+      velz[j] +=  frnd(((gr*diz*1e6) * s) + frnd((1*rot * dirz*1e6) * s));
       
       // }
     }
