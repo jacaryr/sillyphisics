@@ -32,7 +32,11 @@ const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x) => Math.round(x);
-const sigscaler = PI;
+const modtanh = (x)=> 0>x?(Math.E**(2*x)-1)/(Math.E**(2*-x)+1):-(Math.E**(2*x)-1)/(Math.E**(2*-x)+1);
+const erf = (x) => 0<x?1/Math.exp(Math.fround(Math.pow(x,-.25))):1/-Math.exp(Math.fround(Math.pow(x,-.25)));
+
+const sigscaler = Math.fround(1);
+const leg = (x) => x / (sigscaler + Math.abs(x));
 const sig = (x) =>
   x > 0
     ? 1 - sigscaler / (sigscaler + Math.abs(x))
@@ -40,7 +44,6 @@ const sig = (x) =>
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
-const leg = (x) => x / (PI + Math.abs(x));
 const log = (x) => (1 / (1 + Math.exp(-x)) - 0.5) * 2;
 const atan = (x) => Math.atan(x) / (PI / 2);
 const spheres = [];
@@ -52,10 +55,10 @@ animate();
 
 function makeSphere() {
   const sphere = new THREE.LineSegments(
-    new THREE.SphereBufferGeometry(2, 16, 16),
+    new THREE.SphereBufferGeometry(4, 16, 16),
 
     new THREE.MeshPhongMaterial({
-      color: 0x7a7a7a,
+      color: 0xfffff,// 0x7a7a7a,
       
       // fog: true,
 
@@ -71,7 +74,7 @@ function makeSphere() {
 }
 function init() {
   camera = new THREE.PerspectiveCamera(
-    50,
+    40,
 
     window.innerWidth / window.innerHeight,
 
@@ -82,29 +85,29 @@ function init() {
   camera.position.y = 512.0;
   camera.position.z = 512.0;
   camera.position.x = 512.0;
-  var color = 0x280000;
+  var color = 0x0f000f;
   scene = new THREE.Scene();
-  var light = new THREE.PointLight(color, 5, 100, 0);
-  light.position.set(1000000.0, 1000000, 1000000.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
+  light.position.set(10000.0, 10000, 10000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 5, 100, 0);
-  light.position.set(-1000000.0, 0, -1000000.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
+  light.position.set(-10000.0,-10000, -10000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 5, 100, 0);
-  light.position.set(0.0, 1000000, 1000000.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
+  light.position.set(0.0, 10000, 10000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color,5, 100, 0);
-  light.position.set(0.0, -1000000, -1000000.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
+  light.position.set(0.0, -10000, -10000.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 5, 100, 0);
-  light.position.set(1000000.0, 1000000, 0.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.00001);
+  light.position.set(10000.0, 10000, 0.0);
   scene.add(light);
-  var light = new THREE.PointLight(color, 5, 100, 0);
-  light.position.set(-1000000.0, -1000000, 0.0);
+  var light = new THREE.PointLight(color, 16, 100000000, 0.00001);
+  light.position.set(-10000.0, -10000, 0.0);
   scene.add(light);
-  var light = new THREE.PointLight(0x0f00f0, 255, 100, 0);
-  light.position.set(0.0, 0.0, 0.0);
-  scene.add(light);
+  var lighta = new THREE.PointLight(0xa00a0e, 18, 1000000, 0.01);
+  lighta.position.set(0.0, 0.0, 0.0);
+  scene.add(lighta);
 
   var d = new Date();
   var countsplit = Math.pow(count, 1 / 3);
@@ -123,9 +126,9 @@ function init() {
         const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
         const theta = Math.atan2(rhat, kk);
         const time = parseInt(d.getTime());
-        tempsphere.position.x = 64 * ii;
-        tempsphere.position.y = 64 * jj;
-        tempsphere.position.z = 64 * kk;
+        tempsphere.position.x = 128 * ii;
+        tempsphere.position.y = 128 * jj;
+        tempsphere.position.z = 128 * kk;
 
         spheres.push(tempsphere);
         scene.add(tempsphere);
@@ -187,12 +190,12 @@ function render() {
     // const y1 = frnd((sphere1.position.y));
     // const z1 = frnd((sphere1.position.z));
     // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
-    velx[ndx1] = frnd(.99999 * velx[ndx1]);
-    vely[ndx1] = frnd(.99999 * vely[ndx1]);
-    velz[ndx1] = frnd(.99999 * velz[ndx1]);
-    sphere1.translateX( frnd(.01*velx[ndx1]));
-    sphere1.translateY( frnd(.01*vely[ndx1]));
-    sphere1.translateZ( frnd(.01*velz[ndx1]));
+    // velx[ndx1] = frnd(.99999 * velx[ndx1]);
+    // vely[ndx1] = frnd(.99999 * vely[ndx1]);
+    // velz[ndx1] = frnd(.99999 * velz[ndx1]);
+    sphere1.translateX( frnd(.01*(velx[ndx1])));
+    sphere1.translateY( frnd(.01*(vely[ndx1])));
+    sphere1.translateZ( frnd(.01*(velz[ndx1])));
     // Array(hit[ndx1]).fill(false,0,size);
   }
 
@@ -207,7 +210,7 @@ function render() {
       const x = frnd(sphere.position.x);
       const y = frnd(sphere.position.y);
       const z = frnd(sphere.position.z);
-      var dis = frnd(leg(sphere1.position.distanceTo(sphere.position))); //
+      var dis = frnd(erf(sphere1.position.distanceTo(sphere.position))); //
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
       // if (dis <= 0.25) continue;
       // dis = (dis - 0.25) /  (1-0.25);
@@ -218,34 +221,33 @@ function render() {
       var dirx = frnd(sign(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
       var diry = frnd(sign(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
       var dirz = frnd(sign(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-  
-        const s = (1e-8 / size)/2;
-        const qbccir = 1 ** (1 / 2);
-        const scale = frnd(dis**(1/3));//dis*dis);
-        if (round(360*scale)===0)continue;
-        const dix = frnd(dirx * (round(scale*360)));
-        const diy = frnd(diry * (round(scale*360)));
-        const diz = frnd(dirz * (round(scale*360)));
-        var lat = frnd(asin(-1.0 + (2.0 * round( 360*(dis**(1/3)))) / 360));
-        var lon = frnd(2.4* round(360*(dis**(1/3))));
-        lat *= 2*2.4;//frnd(2*(2.4*PI / 180));
-        lon *= 2*1;//frnd(2*(PI / 180));
-        var rot=frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
-        velx[i] -=  frnd((round(gr*dix*1e7) * s) + frnd(round(1*rot * dirx*1e7) * s));
-        vely[i] -=  frnd((round(gr*diy*1e7) * s) + frnd(round(1*rot * diry*1e7) * s));
-        velz[i] -=  frnd((round(gr*diz*1e7) * s) + frnd(round(1*rot * dirz*1e7) * s));
-        velx[j] +=  frnd((round(gr*dix*1e7) * s) + frnd(round(1*rot * dirx*1e7) * s));
-        vely[j] +=  frnd((round(gr*diy*1e7) * s) + frnd(round(1*rot * diry*1e7) * s));
-        velz[j] +=  frnd((round(gr*diz*1e7) * s) + frnd(round(1*rot * dirz*1e7) * s));
+      const s = (1e-7 / size)/2;
+      const qbccir = 1 ** (1 / 2);
+      const scale = frnd(1-(dis));//dis*dis);
+      if (round(360*scale)===0)continue;
+      const dix = frnd(dirx * (round(scale*360)));
+      const diy = frnd(diry * (round(scale*360)));
+      const diz = frnd(dirz * (round(scale*360)));
+      var lat = frnd(asin(-1.0 + (2.0 * round( 360*(scale))) / 360));
+      var lon = frnd(2.4* round(360*(scale)));
+      lat *= 2.4;//frnd(2*(2.4*PI / 180));
+      lon *= 1;//frnd(2*(PI / 180));
+      var rot= -frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
+      velx[i] -=  frnd(((gr*dix*1e7) * s) + frnd((1*rot * dirx*1e7) * s));
+        vely[i] -=  frnd(((gr*diy*1e7) * s) + frnd((1*rot * diry*1e7) * s));
+        velz[i] -=  frnd(((gr*diz*1e7) * s) + frnd((1*rot * dirz*1e7) * s));
+        velx[j] +=  frnd(((gr*dix*1e7) * s) + frnd((1*rot * dirx*1e7) * s));
+        vely[j] +=  frnd(((gr*diy*1e7) * s) + frnd((1*rot * diry*1e7) * s));
+        velz[j] +=  frnd(((gr*diz*1e7) * s) + frnd((1*rot * dirz*1e7) * s));
     
     // }
-    }
   }
-  step=false;
+}
+step=false;
 
-  renderer.render(scene, camera);
-  controls.update();
-  stats.update();
+renderer.render(scene, camera);
+controls.update();
+stats.update();
 }
 
 function App() {
