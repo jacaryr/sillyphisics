@@ -82,9 +82,9 @@ function init() {
     10000000000000
   );
 
-  camera.position.y = 512.0;
-  camera.position.z = 512.0;
-  camera.position.x = 512.0;
+  camera.position.y = 1380.0;
+  camera.position.z = 1380.0;
+  camera.position.x = 1380.0;
   var color = 0x0f000f;
   scene = new THREE.Scene();
   var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
