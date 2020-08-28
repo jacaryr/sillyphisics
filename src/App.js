@@ -4,7 +4,7 @@ import { complex } from "mathjs";
 import "./App.css";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
-import { Vector3, PixelFormat, Vector4 } from "three";
+import { Vector3, PixelFormat, Vector4, ColorKeyframeTrack } from "three";
 import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
@@ -22,7 +22,8 @@ var move = false;
 
 // for (var j = 0; j < weight.length; j++)
 //   for (var i = 0; i < weight.length; i++) weight[j][i] = Math.random();
-
+var clicked = false;
+var switchcam = 4200;
 var controls;
 
 var stats, tempsphere;
@@ -32,12 +33,20 @@ const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x) => Math.round(x);
-const modtanh = (x)=> 0>x?(Math.E**(2*x)-1)/(Math.E**(2*-x)+1):-(Math.E**(2*x)-1)/(Math.E**(2*-x)+1);
-const erf = (x) => x>0?Math.exp(Math.fround(1/-x)):x!=0?-Math.exp(Math.fround(1/x)):0;
+const modtanh = (x) =>
+  0 > x
+    ? (Math.E ** (2 * x) - 1) / (Math.E ** (2 * -x) + 1)
+    : -(Math.E ** (2 * x) - 1) / (Math.E ** (2 * -x) + 1);
+const erf = (x) =>
+  x > 0
+    ? Math.exp(Math.fround(1 / -x))
+    : x != 0
+    ? -Math.exp(Math.fround(1 / x))
+    : 0;
 
 const sigscaler = Math.fround(1);
 const leg = (x) => x / (sigscaler + Math.abs(x));
-const sig = (x) => 1/(1+Math.E**(-x))
+const sig = (x) => 1 / (1 + Math.E ** -x);
 const sin = (x) => Math.sin(x);
 const sqrt = (x) => Math.sqrt(x);
 const cos = (x) => Math.cos(x);
@@ -55,8 +64,8 @@ function makeSphere() {
     new THREE.SphereBufferGeometry(2, 16, 16),
 
     new THREE.MeshPhongMaterial({
-      color: 0xfffff,// 0x7a7a7a,
-      
+      color: 0xfffff, // 0x7a7a7a,
+
       // fog: true,
 
       blending: THREE.NormalBlending,
@@ -65,7 +74,8 @@ function makeSphere() {
 
       reflectivity: 255,
       //  bumpScale:5
-    }),1
+    }),
+    1
   );
   return sphere;
 }
@@ -79,16 +89,16 @@ function init() {
     10000000000000
   );
 
-  camera.position.y = 1380.0;
-  camera.position.z = 1380.0;
-  camera.position.x = 1380.0;
+  camera.position.y = switchcam;
+  camera.position.z = switchcam;
+  camera.position.x = switchcam;
   var color = 0x0f000f;
   scene = new THREE.Scene();
   var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
   light.position.set(10000.0, 10000, 10000.0);
   scene.add(light);
   var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
-  light.position.set(-10000.0,-10000, -10000.0);
+  light.position.set(-10000.0, -10000, -10000.0);
   scene.add(light);
   var light = new THREE.PointLight(color, 16, 100000000, 0.0001);
   light.position.set(0.0, 10000, 10000.0);
@@ -123,9 +133,9 @@ function init() {
         const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
         const theta = Math.atan2(rhat, kk);
         const time = parseInt(d.getTime());
-        tempsphere.position.x = 12 * ii;
-        tempsphere.position.y = 12 * jj;
-        tempsphere.position.z = 12 * kk;
+        tempsphere.position.x = 360 * ii;
+        tempsphere.position.y = 360 * jj;
+        tempsphere.position.z = 360 * kk;
 
         spheres.push(tempsphere);
         scene.add(tempsphere);
@@ -150,10 +160,20 @@ function init() {
   document.body.appendChild(renderer.domElement);
 
   controls = new TrackballControls(camera, renderer.domElement);
-
+  window.addEventListener("click", onclick, false);
   window.addEventListener("resize", onWindowResize, false);
 }
 
+function onclick() {
+  // switchcam = clicked===true?(clicked=false,4000):(clicked=true,0);
+  camera.updateProjectionMatrix();
+  camera.position.x =
+    clicked === true ? ((clicked = false), switchcam) : ((clicked = true), 0); //switchcam;
+  camera.position.y =
+    clicked === true ? ((clicked = false), switchcam) : ((clicked = true), switchcam); //switchcam;
+  camera.position.z =
+    clicked === true ? ((clicked = false), switchcam) : ((clicked = true), 0); //switchcam;
+}
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
 
@@ -166,90 +186,89 @@ function animate() {
   stats.update();
   // setTimeout(
   //   () => {
-      stats.begin();
-      requestAnimationFrame(animate);
-      render();
-    // },
-    // (1000 / 30) * step == false ? 2 : (step = false),
-    // 1
-    // );
-    // step = true;
+  stats.begin();
+  requestAnimationFrame(animate);
+  render();
+  // },
+  // (1000 / 30) * step == false ? 2 : (step = false),
+  // 1
+  // );
+  // step = true;
   stats.end();
 }
 
 function render() {
   var size = spheres.length;
   var sphere1, sphere;
-    for (let ndx1 = 0; ndx1 < size; ndx1++) {
-      sphere1 = spheres[ndx1];
-      // const x1 = frnd((sphere1.position.x));
-      // const y1 = frnd((sphere1.position.y));
-      // const z1 = frnd((sphere1.position.z));
-      // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
-      // velx[ndx1] = frnd(.99999 * velx[ndx1]);
-      // vely[ndx1] = frnd(.99999 * vely[ndx1]);
-      // velz[ndx1] = frnd(.99999 * velz[ndx1]);
-      sphere1.translateX( (.01*(velx[ndx1])));
-      sphere1.translateY( (.01*(vely[ndx1])));
-      sphere1.translateZ( (.01*(velz[ndx1])));
-      // Array(hit[ndx1]).fill(false,0,size);
-    }
+  for (let ndx1 = 0; ndx1 < size; ndx1++) {
+    sphere1 = spheres[ndx1];
+    // const x1 = frnd((sphere1.position.x));
+    // const y1 = frnd((sphere1.position.y));
+    // const z1 = frnd((sphere1.position.z));
+    // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
+    // velx[ndx1] = frnd(.99999 * velx[ndx1]);
+    // vely[ndx1] = frnd(.99999 * vely[ndx1]);
+    // velz[ndx1] = frnd(.99999 * velz[ndx1]);
+    sphere1.translateX(10 * velx[ndx1]);
+    sphere1.translateY(10 * vely[ndx1]);
+    sphere1.translateZ(10 * velz[ndx1]);
+    // Array(hit[ndx1]).fill(false,0,size);
+  }
 
-  
-  for (let i = 1; i < size; i++) {
+  for (let i = 0; i < size; i++) {
     sphere1 = spheres[i];
     const x1 = frnd(sphere1.position.x);
     const y1 = frnd(sphere1.position.y);
     const z1 = frnd(sphere1.position.z);
-    for (var j = i-1 ; j >= 0; --j) {
+    for (var j = i; j >= 0; --j) {
       sphere = spheres[j];
-      if(i==j)continue;
+      if (i == j) continue;
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
       const x = frnd(sphere.position.x);
       const y = frnd(sphere.position.y);
       const z = frnd(sphere.position.z);
-      var dis = frnd((sphere1.position.distanceTo(sphere.position))); //
+      var dis = frnd(sphere1.position.distanceTo(sphere.position)); //
       // var dis = frnd(sig(Math.sqrt(((x1-x)**2)+((y1-y)**2)+((z1-z)**2))));
       // if (dis <= 0.25) continue;
       // dis = (dis - 0.25) /  (1-0.25);
       // if ((360*(1-dis**(2))) >= 90/360) {
-      const mid = Math.hypot(x1-x,y1-y,z1-z);
-      const gr = 1.6//round(1e16*(sqrt(5.0) + 1.0) / 2.0)*1e-16; // golden ratio = 1.6180339887498948482
-      const ga = round(1e16*(2.0 - gr) * (2.0 * PI))*1e-16; // golden angle = 2.39996322972865332
+      const mid = Math.hypot(x1 - x, y1 - y, z1 - z);
+      const gr = 1.6; //round(1e16*(sqrt(5.0) + 1.0) / 2.0)*1e-16; // golden ratio = 1.6180339887498948482
+      const ga = 2.4; //round(1e16*(2.0 - gr) * (2.0 * PI))*1e-16; // golden angle = 2.39996322972865332
       const qbccir = 1 ** (1 / 2);
-      
-      const s = (1e-7 );
-      
-      dis = frnd(erf(mid));
-      var dirx = frnd(tanh(x1 - x)); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry = frnd(tanh(y1 - y)); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz = frnd(tanh(z1 - z)); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      const scale = frnd((Math.pow(dis,2)));//dis*dis);
-      if (round(scale*360)===0)continue;
-     
-      const dix = frnd(dirx / (round((scale)*360)));
-      const diy = frnd(diry / (round((scale)*360)));
-      const diz = frnd(dirz / (round((scale)*360)));
-      var lat = frnd(asin(-1.0 + (2.0 * round( 360*(1-scale))) / 360));
-      var lon = frnd(2.4* round(360*(1-scale)));
-      lat *= frnd(2*(2.4*PI / 180));
-      lon *= frnd(2*(PI / 180));
-      var rot= -frnd(Math.atan2(lat,lon));//cos(lat) *sin(lon));
-      velx[i] -=  frnd(((gr*dix*1e6) * s) + frnd((1*rot * dirx*1e6) * s));
-      vely[i] -=  frnd(((gr*diy*1e6) * s) + frnd((1*rot * diry*1e6) * s));
-      velz[i] -=  frnd(((gr*diz*1e6) * s) + frnd((1*rot * dirz*1e6) * s));
-      velx[j] +=  frnd(((gr*dix*1e6) * s) + frnd((1*rot * dirx*1e6) * s));
-      vely[j] +=  frnd(((gr*diy*1e6) * s) + frnd((1*rot * diry*1e6) * s));
-      velz[j] +=  frnd(((gr*diz*1e6) * s) + frnd((1*rot * dirz*1e6) * s));
-      
+
+      const s = 1e-5 / size ;
+
+      dis = erf(dis);
+      var dirx = tanh(x1 - x); //));// / frnd(dis*dis* dis))); //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry = tanh(y1 - y); //));// / frnd(dis*dis* dis))); //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz = tanh(z1 - z); //));// / frnd(dis*dis* dis))); //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      const scale = Math.pow(dis, 1/3); //dis*dis);
+      if ((1 - scale) === 0 || scale === 0) continue;
+
+      const dix = dirx * ((1-scale) * 360);
+      const diy = diry * ((1-scale) * 360);
+      const diz = dirz * ((1-scale) * 360);
+      var lat = asin(-1.0 + (2.0 * ((1-scale) * 360)) / 360);
+      var lon = ga * ((1-scale) * 360);
+      lat *= 2*(ga * PI) / 180;
+      lon *= 2*PI / 180;
+      var rot = -Math.atan2(lat, lon); //cos(lat) *sin(lon));
+      velx[i] -= frnd(gr * (dix * 1e1 * 360) * s + frnd(1 * rot * dirx * 1e1 * 360 * s));
+      vely[i] -= frnd(gr * (diy * 1e1 * 360) * s + frnd(1 * rot * diry * 1e1 * 360 * s));
+      velz[i] -= frnd(gr * (diz * 1e1 * 360) * s + frnd(1 * rot * dirz * 1e1 * 360 * s));
+      velx[j] += frnd(gr * (dix * 1e1 * 360) * s + frnd(1 * rot * dirx * 1e1 * 360 * s));
+      vely[j] += frnd(gr * (diy * 1e1 * 360) * s + frnd(1 * rot * diry * 1e1 * 360 * s));
+      velz[j] += frnd(gr * (diz * 1e1 * 360) * s + frnd(1 * rot * dirz * 1e1 * 360 * s));
+
       // }
     }
   }
-  step=false;
-  
+  step = false;
+
   renderer.render(scene, camera);
-controls.update();
-stats.update();
+  controls.update();
+  stats.update();
 }
 
 function App() {
