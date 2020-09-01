@@ -9,7 +9,7 @@ import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
 var renderer, scene, camera;
-var count = Math.pow(10, 3);
+var count = Math.pow(8, 3);
 var velx = new Array(count).fill(0);
 var vely = new Array(count).fill(0);
 var velz = new Array(count).fill(0);
@@ -28,10 +28,7 @@ const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
 const round = (x) => Math.round(x * 1e1) / 1e1;
 const sqrt = (x) => Math.sqrt(x);
-const modtanh = (x) =>
-  0 > x
-    ? 1-(Math.E ** (2 * x) - 1) / (Math.E ** (2 * -x) + 1)
-    : -1-(Math.E ** (2 * x) - 1) / (Math.E ** (2 * -x) + 1);
+
 const erf = (x) =>
   x > 0
     ?  1-( 3.54 / Math.sqrt(PI)) * Math.exp(-.5*Math.pow((x),2))
