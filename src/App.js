@@ -129,7 +129,7 @@ function init() {
         tempsphere.position.x = 256 * (ii);
         tempsphere.position.y = 256 * (jj);
         tempsphere.position.z = 256 * (kk);
-        posw[c++] = ((ii*jj*kk)%count)*(256/countsplit)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256 
+        posw[c++] = ((ii*jj*kk)%8)*(256/-1)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256 
         spheres.push(tempsphere);
         scene.add(tempsphere);
       }
@@ -209,15 +209,15 @@ function render() {
     sphere1.translateY((scale * (vely[ndx1])));
     sphere1.translateZ((scale * (velz[ndx1])));
     posw[ndx1]+=       (scale *  velw[ndx1]);
-    // const x = Math.round(sphere1.position.x);
-    // const y = Math.round(sphere1.position.y);
-    // const z = Math.round(sphere1.position.z);
+    const x = Math.round(sphere1.position.x);
+    const y = Math.round(sphere1.position.y);
+    const z = Math.round(sphere1.position.z);
     // // alert(posw[ndx1])
     // if(posw[ndx1]>0)
     const s = 1;
-    (sphere1.scale.set( (posw[ndx1])/4,
-                        (posw[ndx1])/4,
-                        (posw[ndx1])/4));
+    (sphere1.scale.set( (posw[ndx1])+x,
+                        (posw[ndx1])+y,
+                        (posw[ndx1])+z));
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
     // Array(hit[ndx1]).fill(false,0 de,size);
@@ -249,12 +249,12 @@ function render() {
       const qbccir = 1 ** (1 / 2);
       // Math.complex(2,2)
       const s  = 10;
-      const s1 = 256; 
-      var comp = complex(1,1);
-      comp = comp*2;
+      const s1 = 5120; 
+      // var comp = complex(1,1);
+      // comp = comp*2;
 
 
-      var dis = ((leg(mid))*256)//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
+      var dis = (2*(sig(mid)-.5)*256)//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
       dis*=dis*dis
       if(mid==.0)continue
       const dirx = (x1-x)/dx//mid//PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
