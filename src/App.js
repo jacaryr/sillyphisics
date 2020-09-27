@@ -9,7 +9,7 @@ import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
 var renderer, scene, camera;
-var count = 512;
+var count = Math.pow(4, 4);
 var velx = new Array(count).fill(0);
 var vely = new Array(count).fill(0);
 var velz = new Array(count).fill(0);
@@ -20,27 +20,31 @@ var posw = new Array(count).fill(0);
 var clicked = false;
 var switchcam = 4200;
 var controls;
-const gravconst = 6.6741e-11; 
+const gravconst = 6.6741e-11;
 const frnd = (x) => Math.fround(x);
 var stats, tempsphere;
 const tanh = (x) => Math.tanh(x);
 const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
-const round = (x) => Math.round(x*10)/10 ;
+const round = (x) => Math.round(x * 10) / 10;
 const sqrt = (x) => Math.sqrt(x);
-var fib = (x) => x>0?(((1/sqrt(5))*Math.pow((1+sqrt(5))/2,x))):-(((1/sqrt(5))*Math.pow((1+sqrt(5))/2,-x)))
-var ef =  (x) => x>0?1-(Math.exp(-1*(x)**2)):-1+(Math.exp(-1*(x)**2))
+var fib = (x) =>
+  x > 0
+    ? (1 / sqrt(5)) * Math.pow((1 + sqrt(5)) / 2, x)
+    : -((1 / sqrt(5)) * Math.pow((1 + sqrt(5)) / 2, -x));
+var ef = (x) =>
+  x > 0 ? 1 - Math.exp(-1 * x ** 2) : -1 + Math.exp(-1 * x ** 2);
 const erf = (x) =>
   x > 0
-    ?  1- ( 1 / Math.sqrt(PI)) * Math.exp(-.5*Math.pow((x),2))
-    :  -1+( 1 / Math.sqrt(PI)) * Math.exp(-.5*Math.pow((-x),2));
-const lor = (x) => (1/PI)*Math.atan(x)*2;
-const sigscaler = (PI);
+    ? 1 - (1 / Math.sqrt(PI)) * Math.exp(-0.5 * Math.pow(x, 2))
+    : -1 + (1 / Math.sqrt(PI)) * Math.exp(-0.5 * Math.pow(-x, 2));
+const lor = (x) => (1 / PI) * Math.atan(x) * 2;
+const sigscaler = PI;
 const leg = (x) => x / (sigscaler + Math.abs(x));
 const sig = (x) => 1 / (1 + Math.E ** -x);
-const costan =  (x)=> x>0?1-cos(Math.atan(x)):-1+cos(Math.atan(x))
-const sintan =  (x)=> x>0?sin(Math.atan(x)):-sin(Math.atan(-x))
+const costan = (x) => (x > 0 ? 1 - cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
+const sintan = (x) => (x > 0 ? sin(Math.atan(x)) : -sin(Math.atan(-x)));
 const sin = (x) => Math.sin(x);
 const cos = (x) => Math.cos(x);
 const log = (x) => (1 / (1 + Math.exp(-x)) - 0.5) * 2;
@@ -53,8 +57,8 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Points(
-    new THREE.SphereBufferGeometry(1, 32, 32),
+  const sphere = new THREE.LineSegments(
+    new THREE.SphereBufferGeometry(1, 16, 16),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
@@ -67,8 +71,7 @@ function makeSphere() {
 
       reflectivity: 255,
       //  bumpScale:5
-    }),
-    1
+    })
   );
   return sphere;
 }
@@ -112,26 +115,29 @@ function init() {
 
   var d = new Date();
   var c = 0;
-  var countsplit = 8;//Math.pow(count, 1 / 3);
+  var countsplit = Math.pow(count, 1 / 4);
   for (var j = 0; j < countsplit; j++) {
     for (var k = 0; k < countsplit; k++) {
       for (var i = 0; i < countsplit; i++) {
-        tempsphere = makeSphere();
-        
-        const ii = i - (countsplit -1) / 2;
-        const kk = k - (countsplit -1) / 2;
-        const jj = j - (countsplit -1) / 2;
-        const r = Math.hypot(ii,jj,kk);
-        const rhat = Math.sqrt(Math.pow(ii, 2) + Math.pow(jj, 2));
-        const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
-        const theta = Math.atan2(rhat, kk);
-        const time = parseInt(d.getTime());
-        tempsphere.position.x = 256 * (ii);
-        tempsphere.position.y = 256 * (jj);
-        tempsphere.position.z = 256 * (kk);
-        posw[c++] = ((ii*jj*kk)%8)*(256/-1)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256 
-        spheres.push(tempsphere);
-        scene.add(tempsphere);
+        for (var l = 0; l < countsplit; l++) {
+          tempsphere = makeSphere();
+
+          const ii = i - (countsplit - 1) / 2;
+          const kk = k - (countsplit - 1) / 2;
+          const jj = j - (countsplit - 1) / 2;
+          const ll = l - (countsplit - 1) / 2;
+          const r = Math.hypot(ii, jj, kk);
+          const rhat = Math.sqrt(Math.pow(ii, 2) + Math.pow(jj, 2));
+          const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
+          const theta = Math.atan2(rhat, kk);
+          const time = parseInt(d.getTime());
+          tempsphere.position.x = count * ii;
+          tempsphere.position.y = count * jj;
+          tempsphere.position.z = count * kk;
+          posw[c++] = ll * count; // (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          spheres.push(tempsphere);
+          scene.add(tempsphere);
+        }
       }
     }
   }
@@ -165,7 +171,7 @@ function onclick() {
   camera.position.y =
     clicked === true
       ? ((clicked = false), switchcam)
-      : ((clicked = true ), switchcam); //switchcam;
+      : ((clicked = true), switchcam); //switchcam;
   camera.position.z =
     clicked === true ? ((clicked = false), switchcam) : ((clicked = true), 0); //switchcam;
 }
@@ -179,7 +185,7 @@ function onWindowResize() {
 var step = false;
 function animate() {
   // setTimeout(
-    // () => {
+  // () => {
   // stats.begin();
   requestAnimationFrame(animate);
   render();
@@ -202,78 +208,82 @@ function render() {
     // const y1 = ((sphere1.position.y));
     // const z1 = ((sphere1.position.z));
     // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
-    // velx[ndx1] = (.99999 * velx[ndx1]);
-    // vely[ndx1] = (.99999 * vely[ndx1]);
-    // // velz[ndx1] = (.99999 * velz[ndx1]);
-    sphere1.translateX((scale * (velx[ndx1])));
-    sphere1.translateY((scale * (vely[ndx1])));
-    sphere1.translateZ((scale * (velz[ndx1])));
-    posw[ndx1]+=       (scale *  velw[ndx1]);
+    // velx[ndx1] = (.999 * velx[ndx1]);
+    // vely[ndx1] = (.999 * vely[ndx1]);
+    // velz[ndx1] = (.999 * velz[ndx1]);
+    // velw[ndx1] = (.999 * velw[ndx1]);
+    sphere1.translateX(scale * velx[ndx1]);
+    sphere1.translateY(scale * vely[ndx1]);
+    sphere1.translateZ(scale * velz[ndx1]);
+    posw[ndx1] += scale * velw[ndx1];
     const x = Math.round(sphere1.position.x);
     const y = Math.round(sphere1.position.y);
     const z = Math.round(sphere1.position.z);
     // // alert(posw[ndx1])
     // if(posw[ndx1]>0)
-    const s = 1;
-    (sphere1.scale.set( (posw[ndx1])+x,
-                        (posw[ndx1])+y,
-                        (posw[ndx1])+z));
+    const s = Math.SQRT2;
+    sphere1.scale.set(
+      posw[ndx1] / s, //x
+      posw[ndx1] / s, //y
+      posw[ndx1] / s
+    ); //z
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
     // Array(hit[ndx1]).fill(false,0 de,size);
   }
-// for(let q = 0 ; q<2;  q++)
+  // for(let q = 0 ; q<2;  q++)
   for (let i = 1; i < size; i++) {
     sphere1 = spheres[i];
     const x1 = Math.round(sphere1.position.x);
     const y1 = Math.round(sphere1.position.y);
     const z1 = Math.round(sphere1.position.z);
     const w1 = Math.round(posw[i]);
-    
-    for (var j = i-1 ; j >= 0; j--) {
+
+    for (var j = i - 1; j >= 0; j--) {
       sphere = spheres[j];
       // if (i == j) continue;
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
       const x = Math.round(sphere.position.x);
       const y = Math.round(sphere.position.y);
       const z = Math.round(sphere.position.z);
-      const w = Math.round(posw[j])
-      const dx  = Math.hypot(x1,x)
-      const dy  = Math.hypot(y1,y)
-      const dz  = Math.hypot(z1,z)
-      const dw  = Math.hypot(w1,w)
-      if((dx==0||dy==0||dz==0||dw==0))continue
-      const mid = Math.hypot(x1 - x, y1 - y, z1 - z, w1 - w);
+      const w = Math.round(posw[j]);
+      const dx = Math.hypot(x1, x);
+      const dy = Math.hypot(y1, y);
+      const dz = Math.hypot(z1, z);
+      const dw = Math.hypot(w1, w);
+      if (dx == 0 || dy == 0 || dz == 0 || dw == 0) continue;
+      var mid = Math.hypot(x1 - x, y1 - y, z1 - z, w1 - w);
+      if (mid == 0.0) continue;
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      const qbccir = 1 ** (1 / 2);
       // Math.complex(2,2)
-      const s  = 10;
-      const s1 = 5120; 
+      const s = 0.0005;
+      const s1 = 1;
       // var comp = complex(1,1);
       // comp = comp*2;
 
-
-      var dis = (2*(sig(mid)-.5)*256)//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
-      dis*=dis*dis
-      if(mid==.0)continue
-      const dirx = (x1-x)/dx//mid//PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      const diry = (y1-y)/dy//mid//PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      const dirz = (z1-z)/dz//mid//PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      const dirw = (w1-w)/dw//mid
+      // var dis = (((fib(mid>512?512:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
+      var dis = fib(mid);
+      dis = 1 - 1 / dis;
+      // dis= (dis**ga)
+      if (dis === 0) continue;
+      // dis*=dis
+      const dirx = (x1 - x) / dx; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      const diry = (y1 - y) / dy; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      const dirz = (z1 - z) / dz; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      const dirw = (w1 - w) / dw; //
       // var dix  = sin(Math.atan2((dx),(mid*mid)))
       // var diy  = sin(Math.atan2((dy),(mid*mid)))
       // var diz  = sin(Math.atan2((dz),(mid*mid)))
       // var diw  = sin(Math.atan2((dw),(mid*mid)))
-      if ( dis== 0) continue;
-      velx[i]   =(velx[i]   -(((dirx*s1)/(dis)))*s);//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[i]   =(vely[i]   -(((diry*s1)/(dis)))*s);//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[i]   =(velz[i]   -(((dirz*s1)/(dis)))*s);//+frnd(rot*dirz*s);//frnd(diz * s +
-      velw[i]   =(velw[i]   -(((dirw*s1)/(dis)))*s);
-      velx[j]   =(velx[j]   +(((dirx*s1)/(dis)))*s);//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[j]   =(vely[j]   +(((diry*s1)/(dis)))*s);//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[j]   =(velz[j]   +(((dirz*s1)/(dis)))*s);//+frnd(rot*dirz*s);//frnd(diz * s +r
-      velw[j]   =(velw[j]   +(((dirw*s1)/(dis)))*s);
+      velx[i] = velx[i] - dirx * s1 / dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[i] = vely[i] - diry * s1 / dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[i] = velz[i] - dirz * s1 / dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
+      velw[i] = velw[i] - dirw * s1 / dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[j] = velx[j] + dirx * s1 / dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[j] = vely[j] + diry * s1 / dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[j] = velz[j] + dirz * s1 / dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
+      velw[j] = velw[j] + dirw * s1 / dis * s; //?dirw-.000001:dirw==0?0:dirw
       //
     }
   }
