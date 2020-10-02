@@ -57,21 +57,22 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Line(
-    new THREE.OctahedronBufferGeometry (1,4),
+  const sphere = new THREE.Points(
+    new THREE.OctahedronBufferGeometry (1,5),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
 
-      // fog: true,
+      fog: true,
 
-      // blending: THREE.NormalBlending,
+      blending: THREE.NormalBlending,
       // castshadow:false,
-      transparent: true,
+      // wireframe:true,
       transparent:true,
+      emissive:0x7a7a7a,
       skinning:true,
-      reflectivity: .25,
-       bumpScale:.25
+      reflectivity: 255,
+      //  bumpScale:.25
     })
   );
   return sphere;
