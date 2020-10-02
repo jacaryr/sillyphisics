@@ -67,7 +67,7 @@ function makeSphere() {
 
       // blending: THREE.NormalBlending,
       // castshadow:false,
-      // transparent: true,
+      transparent: true,
       transparent:true,
       skinning:true,
       reflectivity: .25,
