@@ -18,7 +18,7 @@ var posw = new Array(count).fill(0);
 // for (var j = 0; j < weight.length; j++)
 //   for (var i = 0; i < weight.length; i++) weight[j][i] = Math.random();
 var clicked = false;
-var switchcam = 4200;
+var switchcam = 2048;
 var controls;
 const gravconst = 6.6741e-11;
 const frnd = (x) => Math.fround(x);
@@ -43,8 +43,8 @@ const lor = (x) => (1 / PI) * Math.atan(x) * 2;
 const sigscaler = PI;
 const leg = (x) => x / (sigscaler + Math.abs(x));
 const sig = (x) => 1 / (1 + Math.E ** -x);
-const costan = (x) => (x > 0 ? 1 - cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
-const sintan = (x) => (x > 0 ? sin(Math.atan(x)) : -sin(Math.atan(-x)));
+const costan = (x) => (x > 0 ? 1- cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
+const sintan = (x) => sin(Math.atan(x));
 const sin = (x) => Math.sin(x);
 const cos = (x) => Math.cos(x);
 const log = (x) => (1 / (1 + Math.exp(-x)) - 0.5) * 2;
@@ -57,8 +57,8 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.LineSegments(
-    new THREE.SphereBufferGeometry(1, 16, 16),
+  const sphere = new THREE.Points(
+    new THREE.OctahedronBufferGeometry (1,5),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
@@ -66,7 +66,7 @@ function makeSphere() {
       fog: true,
 
       blending: THREE.NoBlending,
-
+      castshadow:false,
       transparent: true,
 
       reflectivity: 255,
@@ -122,20 +122,20 @@ function init() {
         for (var l = 0; l < countsplit; l++) {
           tempsphere = makeSphere();
 
-          const ii = i - (countsplit - 1) / 2;
-          const kk = k - (countsplit - 1) / 2;
-          const jj = j - (countsplit - 1) / 2;
-          const ll = l - (countsplit - 1) / 2;
+          const ii = (i - ((countsplit -1) / 2));
+          const kk = (k - ((countsplit -1) / 2));
+          const jj = (j - ((countsplit -1) / 2));
+          const ll = (l - ((countsplit -1) / 2));
           const r = Math.hypot(ii, jj, kk);
           const rhat = Math.sqrt(Math.pow(ii, 2) + Math.pow(jj, 2));
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = count * ii;
-          tempsphere.position.y = count * jj;
-          tempsphere.position.z = count * kk;
-          posw[c++] = ll * count; // (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
-          spheres.push(tempsphere);
+          tempsphere.position.x = (count) * ii;
+          tempsphere.position.y = (count) * jj;
+          tempsphere.position.z = (count) * kk;
+          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          spheres.push(tempsphere)
           scene.add(tempsphere);
         }
       }
@@ -216,16 +216,16 @@ function render() {
     sphere1.translateY(scale * vely[ndx1]);
     sphere1.translateZ(scale * velz[ndx1]);
     posw[ndx1] += scale * velw[ndx1];
-    const x = Math.round(sphere1.position.x);
-    const y = Math.round(sphere1.position.y);
-    const z = Math.round(sphere1.position.z);
+    // const x = Math.round(sphere1.position.x);
+    // const y = Math.round(sphere1.position.y);
+    // const z = Math.round(sphere1.position.z);
     // // alert(posw[ndx1])
     // if(posw[ndx1]>0)
-    const s = Math.SQRT2;
+    const s = 4.83598//0.09403//6*Math.pow(PI,1/2) ;
     sphere1.scale.set(
-      posw[ndx1] / s, //x
-      posw[ndx1] / s, //y
-      posw[ndx1] / s
+      Math.pow( (posw[ndx1]) , 2/3)*s, //x
+      Math.pow( (posw[ndx1]) , 2/3)*s, //y
+      Math.pow( (posw[ndx1]) , 2/3)*s
     ); //z
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
@@ -234,56 +234,58 @@ function render() {
   // for(let q = 0 ; q<2;  q++)
   for (let i = 1; i < size; i++) {
     sphere1 = spheres[i];
-    const x1 = Math.round(sphere1.position.x);
-    const y1 = Math.round(sphere1.position.y);
-    const z1 = Math.round(sphere1.position.z);
-    const w1 = Math.round(posw[i]);
+    const x1 = round(sphere1.position.x);
+    const y1 = round(sphere1.position.y);
+    const z1 = round(sphere1.position.z);
+    const w1 = round(posw[i]);
+    // if (x1 == 0 || y1 == 0 || z1 == 0 || w1 == 0) continue;
 
     for (var j = i - 1; j >= 0; j--) {
       sphere = spheres[j];
       // if (i == j) continue;
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
-      const x = Math.round(sphere.position.x);
-      const y = Math.round(sphere.position.y);
-      const z = Math.round(sphere.position.z);
-      const w = Math.round(posw[j]);
+      const x = round(sphere.position.x);
+      const y = round(sphere.position.y);
+      const z = round(sphere.position.z);
+      const w = round(posw[j]);
       const dx = Math.hypot(x1, x);
       const dy = Math.hypot(y1, y);
       const dz = Math.hypot(z1, z);
       const dw = Math.hypot(w1, w);
-      if (dx == 0 || dy == 0 || dz == 0 || dw == 0) continue;
-      var mid = Math.hypot(x1 - x, y1 - y, z1 - z, w1 - w);
-      if (mid == 0.0) continue;
+      // if (dx == 0 || dy == 0 || dz == 0 || dw == 0) continue;
+      // if (x == 0 || y == 0 || z == 0 || w == 0) continue;
+      var mid = Math.hypot((x1 - x), (y1 - y), (z1 - z), (w1 - w));
+      // if (mid == 0.0) continue;
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       // Math.complex(2,2)
-      const s = 0.0005;
+      const s =  size-1;
       const s1 = 1;
       // var comp = complex(1,1);
       // comp = comp*2;
 
-      // var dis = (((fib(mid>512?512:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
-      var dis = fib(mid);
-      dis = 1 - 1 / dis;
-      // dis= (dis**ga)
-      if (dis === 0) continue;
-      // dis*=dis
-      const dirx = (x1 - x) / dx; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      const diry = (y1 - y) / dy; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      const dirz = (z1 - z) / dz; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      const dirw = (w1 - w) / dw; //
-      // var dix  = sin(Math.atan2((dx),(mid*mid)))
-      // var diy  = sin(Math.atan2((dy),(mid*mid)))
-      // var diz  = sin(Math.atan2((dz),(mid*mid)))
-      // var diw  = sin(Math.atan2((dw),(mid*mid)))
-      velx[i] = velx[i] - dirx * s1 / dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[i] = vely[i] - diry * s1 / dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[i] = velz[i] - dirz * s1 / dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
-      velw[i] = velw[i] - dirw * s1 / dis * s; //?dirw-.000001:dirw==0?0:dirw
-      velx[j] = velx[j] + dirx * s1 / dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[j] = vely[j] + diry * s1 / dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[j] = velz[j] + dirz * s1 / dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
-      velw[j] = velw[j] + dirw * s1 / dis * s; //?dirw-.000001:dirw==0?0:dirw
+      // mid = ((((mid>size-1?size-1:mid<1?1:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
+      var dis = (Math.pow((mid==0?1:mid),1.5));
+      dis = (1 - 1/ dis);
+      dis*= (dis)
+      // dis *= dis//>2?2:dis;
+      // if (mid === 0) continue;
+      var dirx = costan(x1 - x)//(1-1/Math.pow(dx,1.5)===0?(dirx=0,1):1-1/Math.pow(dx,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry = costan(y1 - y)//(1-1/Math.pow(dy,1.5)===0?(diry=0,1):1-1/Math.pow(dy,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz = costan(z1 - z)//(1-1/Math.pow(dz,1.5)===0?(dirz=0,1):1-1/Math.pow(dz,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      var dirw = costan(w1 - w)//(1-1/Math.pow(dw,1.5)===0?(dirw=0,1):1-1/Math.pow(dw,1.5)) ; //
+      dirx /=  (dis===0?1:dis); //sin(Math.atan2((dx),(mid*mid)))
+      diry /=  (dis===0?1:dis); //sin(Math.atan2((dy),(mid*mid)))
+      dirz /=  (dis===0?1:dis); //sin(Math.atan2((dz),(mid*mid)))
+      dirw /=  (dis===0?1:dis); //sin(Math.atan2((dw),(mid*mid)))
+      velx[i] = velx[i] - dirx / s;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[i] = vely[i] - diry / s;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[i] = velz[i] - dirz / s;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
+      velw[i] = velw[i] - dirw / s;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[j] = velx[j] + dirx / s;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[j] = vely[j] + diry / s;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[j] = velz[j] + dirz / s;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
+      velw[j] = velw[j] + dirw / s;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
       //
     }
   }
