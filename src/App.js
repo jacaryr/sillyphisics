@@ -57,25 +57,27 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.LineSegments(
+  const sphere = new THREE.Points(
     new THREE.OctahedronBufferGeometry (1,5),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
 
-      fog: true,
+      fog: false,
 
-      // blending: THREE.NormalBlending,
-      castshadow:true,
+      blending: THREE.NormalBlending,
+      // castshadow:true,
       // wireframe:true,
       // flatShading:true,
-      opacity:.25,
+      dithering:true,
+      opacity:.125,
       specular:0x7a7a7a,
       shininess:255,
       transparent:true,
-      // emissive:0x7a7a7a,
+      emissive:0x7a7a7a,
+      side:THREE.DoubleSide
       // skinning:true,
-      reflectivity: 255,
+      // reflectivity: .5,
       //  bumpScale:.25
     })
   );
@@ -96,26 +98,26 @@ function init() {
   camera.position.x = switchcam;
   var color = 0x0000f;
   scene = new THREE.Scene();
-  var intensity = 156;
-  var light = new THREE.PointLight(color, intensity, 100000000, 0.0001);
+  var intensity = 12;
+  var light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
   light.position.set(10000.0, 10000, 10000.0);
   scene.add(light);
-   light = new THREE.PointLight(color, intensity, 100000000, 0.0001);
+   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
   light.position.set(-10000.0, -10000, -10000.0);
   scene.add(light);
-   light = new THREE.PointLight(color, intensity, 100000000, 0.0001);
-  light.position.set(-10000, 10000, 10000.0);
+   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
+  light.position.set(0, 10000, 10000.0);
   scene.add(light);
-   light = new THREE.PointLight(color, intensity, 100000000, 0.0001);
-  light.position.set(10000, -10000, -10000.0);
+   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
+  light.position.set(0, -10000, -10000.0);
   scene.add(light);
-   light = new THREE.PointLight(color, intensity, 100000000, 0.00001);
-  light.position.set(10000.0, 10000, -10000);
+   light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
+  light.position.set(10000.0, 10000, 0);
   scene.add(light);
-   light = new THREE.PointLight(color, intensity, 100000000, 0.00001);
-  light.position.set(-10000.0, -10000, 10000);
+   light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
+  light.position.set(-10000.0, -10000, 0);
   scene.add(light);
-  var lighta = new THREE.PointLight(0xa00a0e, 128, 100000000000, 64);
+  var lighta = new THREE.PointLight(0xa00a0e, 10, 100000000, .1);
   lighta.position.set(0.0, 0.0, 0.0);
   scene.add(lighta);
 
@@ -140,8 +142,9 @@ function init() {
           tempsphere.position.x = (count) * ii;
           tempsphere.position.y = (count) * jj;
           tempsphere.position.z = (count) * kk;
-          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit-1)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
-          tempsphere.receiveShadow = true;
+          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((count)/1)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          // tempsphere.receiveShadow = true;
+          // tempsphere.castShadow = true;
           spheres.push(tempsphere)
           scene.add(tempsphere);
         }
