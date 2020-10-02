@@ -57,20 +57,21 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Points(
-    new THREE.OctahedronBufferGeometry (1,5),
+  const sphere = new THREE.Line(
+    new THREE.OctahedronBufferGeometry (1,4),
 
     new THREE.MeshPhongMaterial({
       color: 0x7a7a7a,
 
-      fog: true,
+      // fog: true,
 
-      blending: THREE.NoBlending,
-      castshadow:false,
-      transparent: true,
-
-      reflectivity: 255,
-      //  bumpScale:5
+      // blending: THREE.NormalBlending,
+      // castshadow:false,
+      // transparent: true,
+      transparent:true,
+      skinning:true,
+      reflectivity: .25,
+       bumpScale:.25
     })
   );
   return sphere;
@@ -109,7 +110,7 @@ function init() {
   var light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
   light.position.set(-10000.0, -10000, 0.0);
   scene.add(light);
-  var lighta = new THREE.PointLight(0xa00a0e, 128, 100000000, 64);
+  var lighta = new THREE.PointLight(0xa00a0e, 128, 100000000000, 64);
   lighta.position.set(0.0, 0.0, 0.0);
   scene.add(lighta);
 
@@ -134,7 +135,7 @@ function init() {
           tempsphere.position.x = (count) * ii;
           tempsphere.position.y = (count) * jj;
           tempsphere.position.z = (count) * kk;
-          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit-1)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           spheres.push(tempsphere)
           scene.add(tempsphere);
         }
@@ -259,7 +260,7 @@ function render() {
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       // Math.complex(2,2)
-      const s =  size-1;
+      const s =  size;
       const s1 = 1;
       // var comp = complex(1,1);
       // comp = comp*2;
