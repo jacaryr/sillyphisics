@@ -74,7 +74,7 @@ function makeSphere() {
       specular:0x7a7a7a,
       shininess:255,
       transparent:true,
-      emissive:0x7a7a7a,
+      emissive:0x707070,
       side:THREE.DoubleSide
       // skinning:true,
       // reflectivity: .5,
@@ -102,20 +102,25 @@ function init() {
   var light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
   light.position.set(10000.0, 10000, 10000.0);
   scene.add(light);
-   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
+   light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
   light.position.set(-10000.0, -10000, -10000.0);
   scene.add(light);
-   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
-  light.position.set(0, 10000, 10000.0);
+   light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+  light.position.set(-0, 10000, 10000.0);
   scene.add(light);
-   light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
+   light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
   light.position.set(0, -10000, -10000.0);
   scene.add(light);
-   light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
-  light.position.set(10000.0, 10000, 0);
+   light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+   light.position.set(10000.0,-0, 10000);
+   scene.add(light);
+    light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
+   light.position.set(-10000.0, 0, -10000);
+   scene.add(light);
+   light.position.set(0, 10000, 0);
   scene.add(light);
    light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
-  light.position.set(-10000.0, -10000, 0);
+  light.position.set(0, -10000, 0);
   scene.add(light);
   var lighta = new THREE.PointLight(0xa00a0e, 10, 100000000, .1);
   lighta.position.set(0.0, 0.0, 0.0);
@@ -142,7 +147,7 @@ function init() {
           tempsphere.position.x = (count) * ii;
           tempsphere.position.y = (count) * jj;
           tempsphere.position.z = (count) * kk;
-          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((count)/1)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          posw[c++] = (count / (countsplit)) * ((ll*jj*kk*ii ) % ((count)/1)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.receiveShadow = true;
           // tempsphere.castShadow = true;
           spheres.push(tempsphere)
@@ -231,11 +236,11 @@ function render() {
     // const z = Math.round(sphere1.position.z);
     // // alert(posw[ndx1])
     // if(posw[ndx1]>0)
-    const s = 4.83598//0.09403//6*Math.pow(PI,1/2) ;
+    const s = 0.09403//6*Math.pow(PI,1/2) ;
     sphere1.scale.set(
-      Math.pow( (posw[ndx1]) , 2/3)*s, //x
-      Math.pow( (posw[ndx1]) , 2/3)*s, //y
-      Math.pow( (posw[ndx1]) , 2/3)*s
+      Math.pow( (posw[ndx1]) ,1.5)*s, //x
+      Math.pow( (posw[ndx1]) ,1.5)*s, //y
+      Math.pow( (posw[ndx1]) ,1.5)*s
     ); //z
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
