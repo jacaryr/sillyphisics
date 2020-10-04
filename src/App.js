@@ -57,7 +57,7 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Points(
+  const sphere = new THREE.Line(
     new THREE.OctahedronBufferGeometry (1,5),
 
     new THREE.MeshPhongMaterial({
@@ -70,14 +70,15 @@ function makeSphere() {
       // wireframe:true,
       // flatShading:true,
       dithering:true,
-      opacity:.125,
-      specular:0x7a7a7a,
-      shininess:255,
+      opacity:.0125,
+      specular:0x6a6a6a,
+      shininess:1,
       transparent:true,
-      emissive:0x707070,
-      side:THREE.DoubleSide
+      emissive:0x6a6a6a,
+      side:THREE.DoubleSide,
       // skinning:true,
-      // reflectivity: .5,
+      premultipliedAlpha:true, 
+      reflectivity: 1,
       //  bumpScale:.25
     })
   );
@@ -147,7 +148,7 @@ function init() {
           tempsphere.position.x = (count) * ii;
           tempsphere.position.y = (count) * jj;
           tempsphere.position.z = (count) * kk;
-          posw[c++] = (count / (countsplit)) * ((ll*jj*kk*ii ) % ((count)/1)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.receiveShadow = true;
           // tempsphere.castShadow = true;
           spheres.push(tempsphere)
@@ -238,9 +239,9 @@ function render() {
     // if(posw[ndx1]>0)
     const s = 0.09403//6*Math.pow(PI,1/2) ;
     sphere1.scale.set(
-      Math.pow( (posw[ndx1]) ,1.5)*s, //x
-      Math.pow( (posw[ndx1]) ,1.5)*s, //y
-      Math.pow( (posw[ndx1]) ,1.5)*s
+      Math.pow( (posw[ndx1]) ,3/2)*s, //x
+      Math.pow( (posw[ndx1]) ,3/2)*s, //y
+      Math.pow( (posw[ndx1]) ,3/2)*s
     ); //z
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
@@ -263,36 +264,42 @@ function render() {
       const y = round(sphere.position.y);
       const z = round(sphere.position.z);
       const w = round(posw[j]);
-      const dx = Math.hypot(x1, x);
-      const dy = Math.hypot(y1, y);
-      const dz = Math.hypot(z1, z);
-      const dw = Math.hypot(w1, w);
+      const dx = Math.hypot(x1, x)==0?(1):Math.hypot(x1, x);
+      const dy = Math.hypot(y1, y)==0?(1):Math.hypot(y1, y);
+      const dz = Math.hypot(z1, z)==0?(1):Math.hypot(z1, z);
+      const dw = Math.hypot(w1, w)==0?(1):Math.hypot(w1, w);
       // if (dx == 0 || dy == 0 || dz == 0 || dw == 0) continue;
       // if (x == 0 || y == 0 || z == 0 || w == 0) continue;
       var mid = Math.hypot((x1 - x), (y1 - y), (z1 - z), (w1 - w));
-      // if (mid == 0.0) continue;
+      if (mid == 0.0) mid=1;
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       // Math.complex(2,2)
-      const s =  size;
+      const s =  (size-1)*1;
       const s1 = 1;
       // var comp = complex(1,1);
       // comp = comp*2;
 
       // mid = ((((mid>size-1?size-1:mid<1?1:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
-      var dis = (Math.pow((mid==0?1:mid),1.5));
-      dis = (1 - 1/ dis);
-      dis*= (dis)
+      
+      var dis= tanh(fib(mid))//(Math.pow((mid),2/3))*4.83598;
+      if(dis==0)dis=1;
+    
+      // dis*= (dis)
+      // dis = (2-1/ dis);
+      // dis*= (dis)
+      if(dis==0)dis=1;
+
       // dis *= dis//>2?2:dis;
       // if (mid === 0) continue;
-      var dirx = costan(x1 - x)//(1-1/Math.pow(dx,1.5)===0?(dirx=0,1):1-1/Math.pow(dx,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry = costan(y1 - y)//(1-1/Math.pow(dy,1.5)===0?(diry=0,1):1-1/Math.pow(dy,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz = costan(z1 - z)//(1-1/Math.pow(dz,1.5)===0?(dirz=0,1):1-1/Math.pow(dz,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      var dirw = costan(w1 - w)//(1-1/Math.pow(dw,1.5)===0?(dirw=0,1):1-1/Math.pow(dw,1.5)) ; //
-      dirx /=  (dis===0?1:dis); //sin(Math.atan2((dx),(mid*mid)))
-      diry /=  (dis===0?1:dis); //sin(Math.atan2((dy),(mid*mid)))
-      dirz /=  (dis===0?1:dis); //sin(Math.atan2((dz),(mid*mid)))
-      dirw /=  (dis===0?1:dis); //sin(Math.atan2((dw),(mid*mid)))
+      var dirx = (x1 - x)/(dx)//(1-1/Math.pow(dx,1.5)===0?(dirx=0,1):1-1/Math.pow(dx,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      var diry = (y1 - y)/(dy)//(1-1/Math.pow(dy,1.5)===0?(diry=0,1):1-1/Math.pow(dy,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      var dirz = (z1 - z)/(dz)//(1-1/Math.pow(dz,1.5)===0?(dirz=0,1):1-1/Math.pow(dz,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      var dirw = (w1 - w)/(dw)//(1-1/Math.pow(dw,1.5)===0?(dirw=0,1):1-1/Math.pow(dw,1.5)) ; //
+      dirx /=  (dis); //sin(Math.atan2((dx),(mid*mid)))
+      diry /=  (dis); //sin(Math.atan2((dy),(mid*mid)))
+      dirz /=  (dis); //sin(Math.atan2((dz),(mid*mid)))
+      dirw /=  (dis); //sin(Math.atan2((dw),(mid*mid)))
       velx[i] = velx[i] - dirx / s;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
       vely[i] = vely[i] - diry / s;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
       velz[i] = velz[i] - dirz / s;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
