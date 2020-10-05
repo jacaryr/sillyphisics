@@ -282,7 +282,7 @@ function render() {
 
       // mid = ((((mid>size-1?size-1:mid<1?1:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
       
-      var dis= tanh(fib(mid))//(Math.pow((mid),2/3))*4.83598;
+      var dis= Math.cbrt((mid))//(Math.pow((mid),2/3))*4.83598;
       if(dis==0)dis=1;
     
       // dis*= (dis)
