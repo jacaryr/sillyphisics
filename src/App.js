@@ -4,7 +4,7 @@ import { complex } from "mathjs";
 import "./App.css";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
-import { Vector3, PixelFormat, Vector4, ColorKeyframeTrack } from "three";
+import { Vector3, PixelFormat, Vector4, ColorKeyframeTrack, LinearInterpolant, BackSide, DoubleSide, FrontSide } from "three";
 import { getDefaultNormalizer } from "@testing-library/react";
 const THREE = require("three");
 const PI = Math.PI;
@@ -27,7 +27,7 @@ const tanh = (x) => Math.tanh(x);
 const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
 const sign = (x) => Math.sign(x);
-const round = (x) => Math.round(x * 10) / 10;
+const round = (x) => Math.round(x * 100) / 100;
 const sqrt = (x) => Math.sqrt(x);
 var fib = (x) =>
   x > 0
@@ -43,8 +43,8 @@ const lor = (x) => (1 / PI) * Math.atan(x) * 2;
 const sigscaler = PI;
 const leg = (x) => x / (sigscaler + Math.abs(x));
 const sig = (x) => 1 / (1 + Math.E ** -x);
-const costan = (x) => (x > 0 ? 1- cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
-const sintan = (x) => sin(Math.atan(x));
+const cosatan = (x) => (x > 0 ? 1- cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
+const sinatan = (x) => sin(Math.atan(x));
 const sin = (x) => Math.sin(x);
 const cos = (x) => Math.cos(x);
 const log = (x) => (1 / (1 + Math.exp(-x)) - 0.5) * 2;
@@ -57,25 +57,29 @@ init();
 animate();
 
 function makeSphere() {
-  const sphere = new THREE.Line(
-    new THREE.OctahedronBufferGeometry (1,5),
+  const sphere = new THREE.LineLoop(
+    new THREE.TetrahedronBufferGeometry (1,4),
 
     new THREE.MeshPhongMaterial({
-      color: 0x7a7a7a,
+      color: 0x8D7619,
 
-      fog: false,
+      fog: true,
 
       blending: THREE.NormalBlending,
       // castshadow:true,
+      // receiveshadow:true,
       // wireframe:true,
       // flatShading:true,
-      dithering:true,
-      opacity:.0125,
-      specular:0x6a6a6a,
-      shininess:1,
+      // dithering:true,
+      // size:.1,
       transparent:true,
-      emissive:0x6a6a6a,
-      side:THREE.DoubleSide,
+      opacity:.001,
+      specular:0x8D7619,
+      depthTest:false,
+      side:BackSide,
+      shininess:.01,
+      sizeAttenuation:false,
+      emissive:0x8D7619 ,
       // skinning:true,
       premultipliedAlpha:true, 
       reflectivity: 1,
@@ -86,7 +90,7 @@ function makeSphere() {
 }
 function init() {
   camera = new THREE.PerspectiveCamera(
-    50,
+    45,
 
     window.innerWidth / window.innerHeight,
 
@@ -97,33 +101,52 @@ function init() {
   camera.position.y = switchcam;
   camera.position.z = switchcam;
   camera.position.x = switchcam;
-  var color = 0x0000f;
+  var color = 0x00007a;
   scene = new THREE.Scene();
-  var intensity = 12;
+  var intensity = 3;
   var light = new THREE.AmbientLight(color, intensity, 100000000, 0.0001);
   light.position.set(10000.0, 10000, 10000.0);
   scene.add(light);
    light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
   light.position.set(-10000.0, -10000, -10000.0);
   scene.add(light);
-   light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+  light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
   light.position.set(-0, 10000, 10000.0);
   scene.add(light);
    light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
   light.position.set(0, -10000, -10000.0);
+  scene.add(light);   
+  light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+  light.position.set(10000, 10000, .0);
   scene.add(light);
    light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
-   light.position.set(10000.0,-0, 10000);
-   scene.add(light);
-    light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
-   light.position.set(-10000.0, 0, -10000);
-   scene.add(light);
+  light.position.set(-10000, -10000, .0);
+  scene.add(light);
+  light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+  light.position.set(10000.0,-0, 10000);
+  scene.add(light);
+   light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
+  light.position.set(-10000.0, 0, -10000);
+  scene.add(light);
+  light = new THREE.AmbientLight(color, intensity,  100000000,    0.0001);
+  light.position.set(.0,-0, 10000);
+  scene.add(light);
+   light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
+  light.position.set(.0, 0, -10000);
+  scene.add(light);
+   light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
    light.position.set(0, 10000, 0);
   scene.add(light);
    light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
   light.position.set(0, -10000, 0);
   scene.add(light);
-  var lighta = new THREE.PointLight(0xa00a0e, 10, 100000000, .1);
+  light = new THREE.AmbientLight(color, intensity, 100000000,   0.0001);
+  light.position.set(10000, 0, 0);
+ scene.add(light);
+  light = new THREE.AmbientLight(color, intensity, 100000000, 0.00001);
+ light.position.set(-10000, 0, 0);
+ scene.add(light);
+  var lighta = new THREE.PointLight(0x7a0000, 9, 100000000, .1);
   lighta.position.set(0.0, 0.0, 0.0);
   scene.add(lighta);
 
@@ -145,12 +168,13 @@ function init() {
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = (count) * ii;
-          tempsphere.position.y = (count) * jj;
-          tempsphere.position.z = (count) * kk;
-          posw[c++] = (count / (1)) * ((ll*jj*kk*ii ) % ((countsplit)/2)); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
-          // tempsphere.receiveShadow = true;
+          tempsphere.position.x = (256) * ii;
+          tempsphere.position.y = (256) * jj;
+          tempsphere.position.z = (256) * kk;
+          posw[c++] =             (256 / (1)) * ((ii*jj*kk)%(countsplit/1)  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
+          
           spheres.push(tempsphere)
           scene.add(tempsphere);
         }
@@ -221,27 +245,21 @@ function render() {
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
     sphere1 = spheres[ndx1];
     const scale = 1;
-    // const y1 = ((sphere1.position.y));
-    // const z1 = ((sphere1.position.z));
-    // var dis = sphere1.position.distanceTo(new Vector3(0,0,0));
-    // velx[ndx1] = (.999 * velx[ndx1]);
-    // vely[ndx1] = (.999 * vely[ndx1]);
-    // velz[ndx1] = (.999 * velz[ndx1]);
-    // velw[ndx1] = (.999 * velw[ndx1]);
+   
     sphere1.translateX(scale * velx[ndx1]);
     sphere1.translateY(scale * vely[ndx1]);
     sphere1.translateZ(scale * velz[ndx1]);
     posw[ndx1] += scale * velw[ndx1];
-    // const x = Math.round(sphere1.position.x);
-    // const y = Math.round(sphere1.position.y);
-    // const z = Math.round(sphere1.position.z);
-    // // alert(posw[ndx1])
+    const x = Math.round(sphere1.position.x);
+    const y = Math.round(sphere1.position.y);
+    const z = Math.round(sphere1.position.z);
+    // alert(posw[ndx1])
     // if(posw[ndx1]>0)
-    const s = 0.09403//6*Math.pow(PI,1/2) ;
+    const s = .5//0.09403//6*Math.pow(PI,1/2) ;
     sphere1.scale.set(
-      Math.pow( (posw[ndx1]) ,3/2)*s, //x
-      Math.pow( (posw[ndx1]) ,3/2)*s, //y
-      Math.pow( (posw[ndx1]) ,3/2)*s
+      Math.pow( (posw[ndx1]) ,1)*s, //x
+      Math.pow( (posw[ndx1]) ,1)*s, //y
+      Math.pow( (posw[ndx1]) ,1)*s
     ); //z
     //  else(sphere1.scale.set( -posw[ndx1],-posw[ndx1],-posw[ndx1]))
     // sphere1.updateMatrix();
@@ -249,70 +267,72 @@ function render() {
   }
   // for(let q = 0 ; q<2;  q++)
   for (let i = 1; i < size; i++) {
-    sphere1 = spheres[i];
-    const x1 = round(sphere1.position.x);
-    const y1 = round(sphere1.position.y);
-    const z1 = round(sphere1.position.z);
+    sphere1 = spheres[i].getWorldPosition(spheres[i].position);
+    // const wpos1 = sphere1.getWorldPosition();
+
+    const x1 = round(sphere1.x);
+    const y1 = round(sphere1.y);
+    const z1 = round(sphere1.z);
     const w1 = round(posw[i]);
+    // const sph1 = new Vector4( sphere1.position.x,sphere1.position.y,
+    //                          sphere1.position.z,posw[i])
+    //   sph1.normalize()
     // if (x1 == 0 || y1 == 0 || z1 == 0 || w1 == 0) continue;
 
     for (var j = i - 1; j >= 0; j--) {
-      sphere = spheres[j];
+      sphere = spheres[j].getWorldPosition(spheres[j].position);
       // if (i == j) continue;
       // if(!Max[j]||!Min[j]||Max[j] - Min[j]<0)continue;
-      const x = round(sphere.position.x);
-      const y = round(sphere.position.y);
-      const z = round(sphere.position.z);
+      const x = round(sphere.x);
+      const y = round(sphere.y);
+      const z = round(sphere.z);
       const w = round(posw[j]);
-      const dx = Math.hypot(x1, x)==0?(1):Math.hypot(x1, x);
-      const dy = Math.hypot(y1, y)==0?(1):Math.hypot(y1, y);
-      const dz = Math.hypot(z1, z)==0?(1):Math.hypot(z1, z);
-      const dw = Math.hypot(w1, w)==0?(1):Math.hypot(w1, w);
-      // if (dx == 0 || dy == 0 || dz == 0 || dw == 0) continue;
-      // if (x == 0 || y == 0 || z == 0 || w == 0) continue;
-      var mid = Math.hypot((x1 - x), (y1 - y), (z1 - z), (w1 - w));
+      const sph = new Vector4( x1-x,y1-y,z1-z,w1-w)
+      const thing = new Vector4(0,0,0,0);
+      var mid =  Math.hypot(sph.x,sph.y,sph.z,sph.w)//(x1 - x), (y1 - y), (z1 - z), -(w1 - w));
       if (mid == 0.0) mid=1;
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       // Math.complex(2,2)
-      const s =  (size-1)*1;
-      const s1 = 1;
+      const s = (size-1)/2;
       // var comp = complex(1,1);
       // comp = comp*2;
-
-      // mid = ((((mid>size-1?size-1:mid<1?1:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
       
-      var dis= Math.cbrt((mid))//(Math.pow((mid),2/3))*4.83598;
-      if(dis==0)dis=1;
-    
+      // mid = ((((mid>size-1?size-1:mid<1?1:mid))))//<1?1:mid))))//>256?256:fib(mid)<.5?.5:fib(mid))))//)<4?4:mid>64?64:mid))//(lor(fib(mid))-.268/(1-.268));//Math.pow(fib(mid),Math.pow(fib(mid),-1))-.165;
+      // 
+      var dis= (sqrt(mid))//(Math.pow((mid),2/3)*4.83598);
+      
       // dis*= (dis)
-      // dis = (2-1/ dis);
+      // dis = -(1- dis);
+      if(dis==0)continue;
       // dis*= (dis)
-      if(dis==0)dis=1;
-
+      // if(dis==0)dis=1;
+      
+      // sph.divideScalar(gr)//.multiplyScalar(1/dis).divideScalar(s)
+      sph.normalize().multiplyScalar(1/dis).divideScalar(s)
       // dis *= dis//>2?2:dis;
       // if (mid === 0) continue;
-      var dirx = (x1 - x)/(dx)//(1-1/Math.pow(dx,1.5)===0?(dirx=0,1):1-1/Math.pow(dx,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
-      var diry = (y1 - y)/(dy)//(1-1/Math.pow(dy,1.5)===0?(diry=0,1):1-1/Math.pow(dy,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
-      var dirz = (z1 - z)/(dz)//(1-1/Math.pow(dz,1.5)===0?(dirz=0,1):1-1/Math.pow(dz,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
-      var dirw = (w1 - w)/(dw)//(1-1/Math.pow(dw,1.5)===0?(dirw=0,1):1-1/Math.pow(dw,1.5)) ; //
-      dirx /=  (dis); //sin(Math.atan2((dx),(mid*mid)))
-      diry /=  (dis); //sin(Math.atan2((dy),(mid*mid)))
-      dirz /=  (dis); //sin(Math.atan2((dz),(mid*mid)))
-      dirw /=  (dis); //sin(Math.atan2((dw),(mid*mid)))
-      velx[i] = velx[i] - dirx / s;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[i] = vely[i] - diry / s;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[i] = velz[i] - dirz / s;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
-      velw[i] = velw[i] - dirw / s;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
-      velx[j] = velx[j] + dirx / s;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[j] = vely[j] + diry / s;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[j] = velz[j] + dirz / s;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
-      velw[j] = velw[j] + dirw / s;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
-      //
+      // var dirx = sph.x//(x1 - x)/(dx)//(1-1/Math.pow(dx,1.5)===0?(dirx=0,1):1-1/Math.pow(dx,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(x-x1)/Math.abs(x-x1):0;//>0? (x1-x/Math.abs(x1-x)):0 ;//Math.fround(Math.atan2(x, x1-x ));//a*Math.sign(x1-x));
+      // var diry = sph.y//(y1 - y)/(dy)//(1-1/Math.pow(dy,1.5)===0?(diry=0,1):1-1/Math.pow(dy,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(y-y1)/Math.abs(y-y1):0;//>0? (y1-y/Math.abs(y1-y)):0 ;//Math.fround(Math.atan2(y, y1-y ));//a*Math.sign(y1-y));
+      // var dirz = sph.z//(z1 - z)/(dz)//(1-1/Math.pow(dz,1.5)===0?(dirz=0,1):1-1/Math.pow(dz,1.5)) ; ////PI*(1+((3*(dis)))/(10+sqrt(4-3*((dis))))) //>0?(z-z1)/Math.abs(z-z1):0;//>0? (z1-z/Math.abs(z1-z)):0 ;//Math.fround(Math.atan2(z, z1-z ));//a*Math.sign(z1-z));
+      // var dirw = sph.w//(w1 - w)/(dw)//(1-1/Math.pow(dw,1.5)===0?(dirw=0,1):1-1/Math.pow(dw,1.5)) ; //
+      // dirx /=  (dis); //sin(Math.atan2((dx),(mid*mid)))
+      // diry /=  (dis); //sin(Math.atan2((dy),(mid*mid)))
+      // dirz /=  (dis); //sin(Math.atan2((dz),(mid*mid)))
+      // dirw /=  (dis); //sin(Math.atan2((dw),(mid*mid)))
+      velx[i] = (velx[i] - sph.x) ;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[i] = (vely[i] - sph.y) ;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[i] = (velz[i] - sph.z) ;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
+      velw[i] = (velw[i] - sph.w) ;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[j] = (velx[j] + sph.x) ;// * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[j] = (vely[j] + sph.y) ;// * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[j] = (velz[j] + sph.z) ;// * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
+      velw[j] = (velw[j] + sph.w) ;// * dis * s; //?dirw-.000001:dirw==0?0:dirw
+    
     }
   }
   step = false;
-
+  // console.table(velw)
   renderer.render(scene, camera);
   controls.update();
   stats.update();
