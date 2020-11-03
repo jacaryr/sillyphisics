@@ -101,7 +101,6 @@ function makeSphere() {
       depthTest: 0, //.25,
       side: BackSide,
       // shininess:1,
-      sizeAttenuation: false,
       // emissive:0x7e7a8a,//0x8D7619 ,
       // skinning:true,
       premultipliedAlpha: true,
@@ -202,9 +201,9 @@ function init() {
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = 1 * ii*l;
-          tempsphere.position.y = 1 * jj*l;
-          tempsphere.position.z = 1 * kk*l;
+          tempsphere.position.x = 1 * ii;
+          tempsphere.position.y = 1 * jj;
+          tempsphere.position.z = 1 * kk;
           posw[c++] = 1*l //(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
@@ -262,12 +261,11 @@ function animate() {
   // stats.begin();
   stats.update();
   render();
-  // setTimeout(function cb() {
+   setTimeout(function cb() {
   requestAnimationFrame(animate);
-  // }, 1000 / 60);
-  // (1000 / 10) * step == false ? 2 : (step = false),
-  // 1
-
+   }, 1000 / 30);
+  // (1000 / 10) * step == false ? 2 : (step = false)
+    // ,1
   // );
   // step = true;
   // stats.end();
@@ -317,7 +315,6 @@ function render() {
       // r=r-l
       var tempspheres = spheres//.splice(0,spheres.length/2);
       for(let l = 1;l<tempspheres.length; l++){
-              let sync = async () => {
   for(let r =0;r<l;){
     // if (l >=r) continue;
       // let r = tempspheres.length -1;
@@ -337,28 +334,25 @@ function render() {
       w = round(posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w)//.normalize();
-      const s = size - 1;
+      const s = size - 1;let c = 299792548;
       var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
-      var mid = complex(
-        sqrt(
+      var mid = (
+        Math.abs(
           sphdis1.x ** 2 + sphdis1.y ** 2 + sphdis1.z ** 2 - sphdis1.w ** 2 *c**2
         )
       );
-      var midangle = (sph.length() * sph1.length())>0?Math.cos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
-      mid = mid>0?mid:1//erf(sphdis.toArray())//(mid.re)>0?(1/mid.re**2):1//!mid.re?1:(1/(mid.re**2));
+      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+	  midangle = midangle?midangle/PI:0;
+	  mid = mid?sigdriv(1/mid):0;
+	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
 
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       sphdis
-        .set(
-          sphdis.x,//Math.max(sig(1*sphdis.x),sig(1*sphdis.y),sig(1*sphdis.z ),sig(1*sphdis.w))==sig(sphdis.x)?:0,
-          sphdis.y,//Math.max(sig(1*sphdis.x),sig(1*sphdis.y),sig(1*sphdis.z ),sig(1*sphdis.w))==sig(sphdis.y)?:0,
-          sphdis.z,//Math.max(sig(1*sphdis.x),sig(1*sphdis.y),sig(1*sphdis.z ),sig(1*sphdis.w))==sig(sphdis.z)?:0,
-          sphdis.w//Math.max(sig(1*sphdis.x),sig(1*sphdis.y),sig(1*sphdis.z ),sig(1*sphdis.w))==sig(sphdis.w)?:0
-        )
+        
           // .applyMatrix4(
           //   matmul.set(
           //   sphdis.x,0,-1,0,
@@ -366,20 +360,10 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .multiplyScalar(midangle/(mid**.5))
+        .multiplyScalar(midangle*(mid))
         // .setLength(1/mid)
         .divideScalar(s*1e0)
-        sphdis1
-        .set(
-          (sphdis1.x*sphdis.x-sphdis1.y*sphdis.x-sphdis1.z*sphdis.x-sphdis1.w*sphdis.x),
-          (sphdis1.x*sphdis.y+sphdis1.y*sphdis.y+sphdis1.z*sphdis.y-sphdis1.w*sphdis.y),
-          (sphdis1.x*sphdis.z-sphdis1.y*sphdis.z+sphdis1.z*sphdis.z+sphdis1.w*sphdis.z),
-          (sphdis1.x*sphdis.w+sphdis1.y*sphdis.w-sphdis1.z*sphdis.w+sphdis1.w*sphdis.w)
-        )
-        // .multiplyScalar(midangle)
-        // .setLength(sphdis.length())
-        .divideScalar(s*1e0)
-        // .divideScalar(s * 1e1);
+ 
       velx[l] = (velx[l] - Math.round(sphdis.x*1e5)/1e5); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
       vely[l] = (vely[l] - Math.round(sphdis.y*1e5)/1e5); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
       velz[l] = (velz[l] - Math.round(sphdis.z*1e5)/1e5); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
@@ -393,7 +377,6 @@ function render() {
     // mergedo(m +1, r);
     r++;
   }
-  };sync()
 }
   // mergedo(0,size-1);
   // mergedo((size/2)+1,size-1)
