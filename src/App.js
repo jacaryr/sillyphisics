@@ -201,10 +201,10 @@ function init() {
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = 1 * ii;
-          tempsphere.position.y = 1 * jj;
-          tempsphere.position.z = 1 * kk;
-          posw[c++] = 1*l //(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          tempsphere.position.x = 32 * ii;
+          tempsphere.position.y = 32 * jj;
+          tempsphere.position.z = 32 * kk;
+          posw[c++] = 32*l //(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
 
@@ -276,7 +276,7 @@ function render() {
   var x1, y1, z1, w1, x, y, z, w, sph1;
   var sphere1, sphere, s;
 
-  const scale = 1e0;
+  const scale = 1e2;
   var check = 0.001;
 
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
@@ -338,7 +338,7 @@ function render() {
       var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
       var mid = (
-        Math.abs(
+        (
           sphdis1.x ** 2 + sphdis1.y ** 2 + sphdis1.z ** 2 - sphdis1.w ** 2 *c**2
         )
       );
@@ -360,9 +360,9 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .multiplyScalar(midangle*(mid))
+        .multiplyScalar(midangle*(1))
         // .setLength(1/mid)
-        .divideScalar(s*1e0)
+        .divideScalar(s*1e1)
  
       velx[l] = (velx[l] - Math.round(sphdis.x*1e5)/1e5); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
       vely[l] = (vely[l] - Math.round(sphdis.y*1e5)/1e5); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
