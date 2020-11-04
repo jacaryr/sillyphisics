@@ -344,7 +344,7 @@ function render() {
       );
       var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle/PI:0;
-	  mid = mid?sigdriv(1/mid):0;
+	  mid = mid?sigdriv(mid):0;
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
