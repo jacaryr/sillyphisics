@@ -42,13 +42,13 @@ var posw = new Array(count).fill(0);
 // for (var j = 0; j < weight.length; j++)
 //   for (var i = 0; i < weight.length; i++) weight[j][i] = Math.random();
 var clicked = false;
-var switchcam = 32;
+var switchcam = 640;
 var controls;
 const gravconst = 6.6741e-11;
 const angdif = (x, y) => x.dot(y) / (x.length() * y.length());
 const frnd = (x) => Math.fround(x);
 var stats, tempsphere;
-const speck = (x) => 2 ** (-x - 1);
+const speck = (x) => x>0?2 * 2 ** (-x - 1):2 * 2 ** (x - 1);
 const tanh = (x) => Math.tanh(x);
 const tan = (x) => Math.tan(x);
 const asin = (x) => Math.asin(x);
@@ -61,10 +61,10 @@ var fib = (x) =>
 var ef = (x) => (2 / sqrt(PI)) * Math.exp(-pow(x, 2));
 
 const lor = (x) => (2 / PI) * Math.atan(x) ;
-const sigscaler = PI;
+const sigscaler = 1;//PI**3;
 const leg = (x) => x / (sigscaler + Math.abs(x));
 const sig = (x) => 1 / (1 + Math.exp(-x));
-const sigdriv = (x) => sig(x) * (1 - sig(x)); //sig(x)*(-1+sig(x))
+const sigdriv = (x) => sig(x) * (1 - sig(x)) * 4; //sig(x)*(-1+sig(x))
 const signedsig = (x) => 1 / (1 + Math.exp(-x));
 const cosatan = (x) => (x > 0 ? 1 - cos(Math.atan(x)) : -1 + cos(Math.atan(x)));
 const sinatan = (x) => sin(Math.atan(x));
@@ -204,7 +204,7 @@ function init() {
           tempsphere.position.x = 32 * ii;
           tempsphere.position.y = 32 * jj;
           tempsphere.position.z = 32 * kk;
-          posw[c++] = 32*l //(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          posw[c++] = (32)*(l)//(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
 
@@ -276,7 +276,7 @@ function render() {
   var x1, y1, z1, w1, x, y, z, w, sph1;
   var sphere1, sphere, s;
 
-  const scale = 1e2;
+  const scale = 1e0;
   var check = 0.001;
 
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
@@ -303,7 +303,7 @@ function render() {
     // } else 
     // posw[ndx1] =posw[ndx1]>0?posw[ndx1]:posw[ndx1]>1?1:0
     check = Math.abs(posw[ndx1]);
-    s = check / PI ** 2; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
+    s = check*.5/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
     sphere1.scale.set(s, s, s); //1
   }
   
@@ -322,35 +322,35 @@ function render() {
       sphere =  tempspheres[r].position; //.getWorldPosition(spheres[j].position);
       // const wpos1 = sphere1.getWorldPosition();
 
-      x1 = round(sphere1.x*1e5); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
-      y1 = round(sphere1.y*1e5); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
-      z1 = round(sphere1.z*1e5); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
-      w1 = round(posw[l]  *1e5); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
+      x1 = Math.round(sphere1.x*1e5); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
+      y1 = Math.round(sphere1.y*1e5); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
+      z1 = Math.round(sphere1.z*1e5); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
+      w1 = Math.round(posw[l]  *1e5); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
       const sph1 = new Vector4(x1, y1, z1, w1)//.normalize()
 
-      x = round(sphere.x*1e5); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
-      y = round(sphere.y*1e5); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
-      z = round(sphere.z*1e5); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
-      w = round(posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
+      x = Math.round(sphere.x*1e5); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
+      y = Math.round(sphere.y*1e5); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
+      z = Math.round(sphere.z*1e5); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
+      w = Math.round(posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w)//.normalize();
-      const s = size - 1;let c = 299792548;
+      const s = size;let c = 299792548;
       var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
       var mid = (
-        (
-          sphdis1.x ** 2 + sphdis1.y ** 2 + sphdis1.z ** 2 - sphdis1.w ** 2 *c**2
+       (
+          ((sphdis1.x))**2 + ((sphdis1.y))**2 + ((sphdis1.z))**2 + (sphdis1.w ** 2) 
         )
       );
-      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
-	  midangle = midangle?midangle/PI:0;
-	  mid = mid?sigdriv(mid):0;
+      const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
+      const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
+      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+	  midangle = midangle?midangle*(1/PI):0;
+	mid= (mid)?sigdriv(1/(mid)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
 
-      const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
-      const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       sphdis
         
           // .applyMatrix4(
@@ -360,18 +360,18 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .multiplyScalar(midangle*(1))
+        .multiplyScalar(1/2**midangle)
+	.divideScalar(s*1e0)
         // .setLength(1/mid)
-        .divideScalar(s*1e1)
  
-      velx[l] = (velx[l] - Math.round(sphdis.x*1e5)/1e5); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[l] = (vely[l] - Math.round(sphdis.y*1e5)/1e5); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[l] = (velz[l] - Math.round(sphdis.z*1e5)/1e5); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
-      velw[l] = (velw[l] - Math.round(sphdis.w*1e5)/1e5); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
-      velx[r] = (velx[r] + Math.round(sphdis.x*1e5)/1e5); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[r] = (vely[r] + Math.round(sphdis.y*1e5)/1e5); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[r] = (velz[r] + Math.round(sphdis.z*1e5)/1e5); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
-      velw[r] = (velw[r] + Math.round(sphdis.w*1e5)/1e5); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[l] = (velx[l] - (Math.round(sphdis.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[l] = (vely[l] - (Math.round(sphdis.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[l] = (velz[l] - (Math.round(sphdis.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
+      velw[l] = (velw[l] - (Math.round(sphdis.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[r] = (velx[r] + (Math.round(sphdis.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[r] = (vely[r] + (Math.round(sphdis.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[r] = (velz[r] + (Math.round(sphdis.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
+      velw[r] = (velw[r] + (Math.round(sphdis.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
     // }1
     // mergedo(l, m);
     // mergedo(m +1, r);
