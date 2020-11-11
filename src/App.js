@@ -73,10 +73,11 @@ const cos = (x) => Math.cos(x);
 const log = (x) => (1 / (1 + Math.exp(-x)) - 0.5) * 2;
 const atan = (x) => Math.atan(x) / (PI / 2);
 const spheres = [];
-
+var opac = 0;
 var start = Date.now();
 init();
 
+let sw = false;
 animate();
 
 function makeSphere() {
@@ -94,17 +95,19 @@ function makeSphere() {
       // wireframe:true,
       // flatShading:true,
       // dithering: true,
-      // size:.0001,
+      // size:.0001
+      opacity:.025,
       transparent: true,
-      opacity: 0.025,
       specular: 0x7e7a8a,
-      depthTest: 0, //.25,
+      shininess:.05,
+      depthTest: false, //.25,
       side: BackSide,
-      // shininess:1,
-      // emissive:0x7e7a8a,//0x8D7619 ,
-      // skinning:true,
+      //emissive:0x7e7a8a,//0x8D7619 ,
+      emissiveIntensity:.1,
+      //skinning:true,
       premultipliedAlpha: true,
-      // reflectivity: 1,
+      combine:THREE.MixOperation,
+      reflectivity: .1,
       //  bumpScale:.25
     })
   );
@@ -263,7 +266,9 @@ function animate() {
   render();
    setTimeout(function cb() {
   requestAnimationFrame(animate);
-   }, 1000 / 30);
+   }, 1000 / 60);
+opac+= opac<=64&&!sw?(1):(opac>=0)?(sw=true,-2):(sw=false);
+
   // (1000 / 10) * step == false ? 2 : (step = false)
     // ,1
   // );
@@ -277,7 +282,7 @@ function render() {
   var sphere1, sphere, s;
 
   const scale = 1e0;
-  var check = 0.001;
+  var check = 0.01;
 
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
     sphere1 = spheres[ndx1];
@@ -288,8 +293,14 @@ function render() {
     //   velx[ndx1] =.5-sig(vx)
     //   vely[ndx1] =.5-sig(vy)
     //   velz[ndx1] =.5-sig(vz)
-    //   velw[ndx1] =.5-sig(vw)
-
+     sphere1.material.specular= new THREE.Color( (velx[ndx1]*velw[ndx1]),
+						 (vely[ndx1]*velw[ndx1]),
+						 (velz[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
+    sphere1.material.emissive= new THREE.Color(  (velx[ndx1]*velw[ndx1])%64,
+						 (vely[ndx1]*velw[ndx1])%64,
+						 (velz[ndx1]*velw[ndx1])%64);
+    //sphere1.material.color = new THREE.Color( opac-32,opac-16,opac-64);
+    //sphere1.material.needUpdate = true;
     sphere1.translateX(((velx[ndx1])) * scale);
     sphere1.translateY(((vely[ndx1])) * scale);
     sphere1.translateZ(((velz[ndx1])) * scale);
@@ -344,7 +355,7 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
 	mid= (mid)?sigdriv(1/(mid)):0//-((mid));
 	  
