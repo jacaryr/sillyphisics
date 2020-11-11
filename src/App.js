@@ -293,12 +293,12 @@ function render() {
     //   velx[ndx1] =.5-sig(vx)
     //   vely[ndx1] =.5-sig(vy)
     //   velz[ndx1] =.5-sig(vz)
-   sphere1.material.specular= new THREE.Color(  (velx[ndx1]+velw[ndx1]),
-						(vely[ndx1]+velw[ndx1]),
-						(velz[ndx1]+velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
-   sphere1.material.emissive= new THREE.Color( (velx[ndx1]*velw[ndx1]),
+   sphere1.material.specular= new THREE.Color(  (velx[ndx1]*velw[ndx1]),
 						(vely[ndx1]*velw[ndx1]),
-						(velz[ndx1]*velw[ndx1]));
+						(velz[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
+   sphere1.material.emissive= new THREE.Color(  Math.abs(velx[ndx1]*velw[ndx1]),
+						Math.abs(vely[ndx1]*velw[ndx1]),
+						Math.abs(velz[ndx1]*velw[ndx1]));
     //sphere1.material.color = new THREE.Color( opac-32,opac-16,opac-64);
     //sphere1.material.needUpdate = true;
     sphere1.translateX(((velx[ndx1])) * scale);
@@ -314,7 +314,7 @@ function render() {
     // } else 
     // posw[ndx1] =posw[ndx1]>0?posw[ndx1]:posw[ndx1]>1?1:0
     check = Math.abs(posw[ndx1]);
-    s = check/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
+    s = check*.5/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
     sphere1.scale.set(s, s, s); //1
   }
   
