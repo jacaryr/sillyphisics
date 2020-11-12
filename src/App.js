@@ -96,7 +96,7 @@ function makeSphere() {
       // flatShading:true,
       // dithering: true,
       // size:.0001
-      opacity:.025,
+      opacity:.005,
       transparent: true,
       specular: 0x7e7a8a,
       shininess:.25,
@@ -293,9 +293,9 @@ function render() {
     //   velx[ndx1] =.5-sig(vx)
     //   vely[ndx1] =.5-sig(vy)
     //   velz[ndx1] =.5-sig(vz)
-   sphere1.material.specular= new THREE.Color(  (velx[ndx1]*velw[ndx1]),
-						(vely[ndx1]*velw[ndx1]),
-						(velz[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
+   sphere1.material.specular= new THREE.Color(  opac*(velz[ndx1]*velw[ndx1]),
+						opac*(velx[ndx1]*velw[ndx1]),
+						opac*(vely[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
    sphere1.material.emissive= new THREE.Color(  Math.abs(velx[ndx1]*velw[ndx1]),
 						Math.abs(vely[ndx1]*velw[ndx1]),
 						Math.abs(velz[ndx1]*velw[ndx1]));
@@ -345,7 +345,7 @@ function render() {
       w = Math.round(posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w)//.normalize();
-      const s = size;let c = 299792548;
+      const s = size-1;let c = 299792548;
       var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
       var mid = (
@@ -355,9 +355,9 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
-	mid= (mid)?sigdriv(1/(mid)):0//-((mid));
+	mid= (mid)?ga*sigdriv(1/(mid)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
@@ -371,7 +371,7 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .multiplyScalar(1/2**midangle)
+        .multiplyScalar(midangle)
 	.divideScalar(s*1e0)
         // .setLength(1/mid)
  
