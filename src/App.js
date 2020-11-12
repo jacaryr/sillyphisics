@@ -293,9 +293,9 @@ function render() {
     //   velx[ndx1] =.5-sig(vx)
     //   vely[ndx1] =.5-sig(vy)
     //   velz[ndx1] =.5-sig(vz)
-   sphere1.material.specular= new THREE.Color(  opac*(velz[ndx1]*velw[ndx1]),
-						opac*(velx[ndx1]*velw[ndx1]),
-						opac*(vely[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
+   sphere1.material.specular= new THREE.Color(  Math.abs(velz[ndx1]*velw[ndx1]),
+						Math.abs(velx[ndx1]*velw[ndx1]),
+						Math.abs(vely[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
    sphere1.material.emissive= new THREE.Color(  Math.abs(velx[ndx1]*velw[ndx1]),
 						Math.abs(vely[ndx1]*velw[ndx1]),
 						Math.abs(velz[ndx1]*velw[ndx1]));
@@ -355,7 +355,7 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
 	mid= (mid)?ga*sigdriv(1/(mid)):0//-((mid));
 	  
