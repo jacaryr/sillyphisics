@@ -96,18 +96,18 @@ function makeSphere() {
       // flatShading:true,
       // dithering: true,
       // size:.0001
-      opacity:.005,
+      opacity:.025,
       transparent: true,
       specular: 0x7e7a8a,
-      shininess:.25,
+      shininess:.05,
       depthTest: false, //.25,
       side: BackSide,
       //emissive:0x7e7a8a,//0x8D7619 ,
-      emissiveIntensity:.25,
+      emissiveIntensity:.05,
       //skinning:true,
       premultipliedAlpha: true,
       combine:THREE.MixOperation,
-      reflectivity: .1,
+      reflectivity: 1,
       //  bumpScale:.25
     })
   );
@@ -346,7 +346,7 @@ function render() {
 
       const sph = new Vector4(x, y, z, w)//.normalize();
       const s = size-1;let c = 299792548;
-      var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
+      var sphdis = new Vector4().subVectors(sph1, sph)//.normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
       var mid = (
        (
@@ -355,14 +355,14 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
 	mid= (mid)?ga*sigdriv(1/(mid)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
 
-      sphdis
+      sphdis1
         
           // .applyMatrix4(
           //   matmul.set(
@@ -372,17 +372,17 @@ function render() {
           //   0,-1,0,sphdis.w)
           // )
         .multiplyScalar(midangle)
-	.divideScalar(s*1e0)
+	.divideScalar(s*1e6)
         // .setLength(1/mid)
  
-      velx[l] = (velx[l] - (Math.round(sphdis.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[l] = (vely[l] - (Math.round(sphdis.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[l] = (velz[l] - (Math.round(sphdis.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
-      velw[l] = (velw[l] - (Math.round(sphdis.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
-      velx[r] = (velx[r] + (Math.round(sphdis.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
-      vely[r] = (vely[r] + (Math.round(sphdis.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
-      velz[r] = (velz[r] + (Math.round(sphdis.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
-      velw[r] = (velw[r] + (Math.round(sphdis.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[l] = (velx[l] - (Math.round(sphdis1.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[l] = (vely[l] - (Math.round(sphdis1.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[l] = (velz[l] - (Math.round(sphdis1.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +
+      velw[l] = (velw[l] - (Math.round(sphdis1.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
+      velx[r] = (velx[r] + (Math.round(sphdis1.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
+      vely[r] = (vely[r] + (Math.round(sphdis1.y*1e5)/1e5)); //sphdis.y)) / 1000; // * dis * s; //?diry-.000001:diry==0?0:diry//+frnd(rot*diry*s);//frnd(diy * s +
+      velz[r] = (velz[r] + (Math.round(sphdis1.z*1e5)/1e5)); //sphdis.z)) / 1000; // * dis * s; //?dirz-.000001:dirz==0?0:dirz//+frnd(rot*dirz*s);//frnd(diz * s +r
+      velw[r] = (velw[r] + (Math.round(sphdis1.w*1e5)/1e5)); //sphdis.w)) / 1000; // * dis * s; //?dirw-.000001:dirw==0?0:dirw
     // }1
     // mergedo(l, m);
     // mergedo(m +1, r);
