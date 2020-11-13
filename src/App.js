@@ -283,8 +283,8 @@ function render() {
 
   const scale = 1e0;
   var check = 0.01;
-
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
+  s = .5
     sphere1 = spheres[ndx1];
     //  var  vx =velx[ndx1]+(Math.random()>.5?1:-1);
     //  var  vy =vely[ndx1]+(Math.random()>.5?1:-1);
@@ -293,12 +293,12 @@ function render() {
     //   velx[ndx1] =.5-sig(vx)
     //   vely[ndx1] =.5-sig(vy)
     //   velz[ndx1] =.5-sig(vz)
-   sphere1.material.specular= new THREE.Color(  Math.abs(velz[ndx1]*velw[ndx1]),
-						Math.abs(velx[ndx1]*velw[ndx1]),
-						Math.abs(vely[ndx1]*velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
-   sphere1.material.emissive= new THREE.Color(  Math.abs(velx[ndx1]*velw[ndx1]),
-						Math.abs(vely[ndx1]*velw[ndx1]),
-						Math.abs(velz[ndx1]*velw[ndx1]));
+   sphere1.material.specular= new THREE.Color(  s*Math.abs(velz[ndx1]+velw[ndx1]),
+						s*Math.abs(velx[ndx1]+velw[ndx1]),
+						s*Math.abs(vely[ndx1]+velw[ndx1]));   //   velw[ndx1] =.5-sig(vw)
+   sphere1.material.emissive= new THREE.Color(  s*Math.abs(velx[ndx1]-velw[ndx1]),
+						s*Math.abs(vely[ndx1]-velw[ndx1]),
+						s*Math.abs(velz[ndx1]-velw[ndx1]));
     //sphere1.material.color = new THREE.Color( opac-32,opac-16,opac-64);
     //sphere1.material.needUpdate = true;
     sphere1.translateX(((velx[ndx1])) * scale);
@@ -314,7 +314,7 @@ function render() {
     // } else 
     // posw[ndx1] =posw[ndx1]>0?posw[ndx1]:posw[ndx1]>1?1:0
     check = Math.abs(posw[ndx1]);
-    s = check*.5/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
+    s = check//*.5/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
     sphere1.scale.set(s, s, s); //1
   }
   
@@ -346,8 +346,8 @@ function render() {
 
       const sph = new Vector4(x, y, z, w).normalize();
       const s = size-1;let c = 299792548;
-      var sphdis = new Vector4().subVectors(sph1, sph)//.normalize() //.normalize(); //.normalize()//
-      var sphdis1 = new Vector4().subVectors(sph1, sph).normalize(); //.normalize()//
+      var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
+      var sphdis1 = new Vector4().subVectors(sph1, sph)//.normalize(); //.normalize()//
       var mid = (
        (
           ((sphdis1.x))**2 + ((sphdis1.y))**2 + ((sphdis1.z))**2 + (sphdis1.w ** 2) 
@@ -355,9 +355,9 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
-	mid= (mid!=0)?(1/(mid)):0//-((mid));
+	mid= (mid!=0)?1-speck((mid**.5)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
