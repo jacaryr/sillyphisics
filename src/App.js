@@ -204,10 +204,10 @@ function init() {
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = 32 * ii;
-          tempsphere.position.y = 32 * jj;
-          tempsphere.position.z = 32 * kk;
-          posw[c++] = (32)*(l)//(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
+          tempsphere.position.x = 32 * ii*ll;
+          tempsphere.position.y = 32 * jj*ll;
+          tempsphere.position.z = 32 * kk*ll;
+          posw[c++] = (32)//(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
 
@@ -284,7 +284,8 @@ function render() {
   const scale = 1e0;
   var check = 0.01;
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
-  s = .5
+  s = .05
+
     sphere1 = spheres[ndx1];
     //  var  vx =velx[ndx1]+(Math.random()>.5?1:-1);
     //  var  vy =vely[ndx1]+(Math.random()>.5?1:-1);
@@ -314,7 +315,8 @@ function render() {
     // } else 
     // posw[ndx1] =posw[ndx1]>0?posw[ndx1]:posw[ndx1]>1?1:0
     check = Math.abs(posw[ndx1]);
-    s = check//*.5/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
+    s = check*.025/PI ; //.1 * PI *0.0000009403 * pow(posw[ndx1] <= 1 ? 1 : posw[ndx1], 2); //1.77245//0.2821//0.1592//0.09403///8//1///Math.pow(PI,1)/2 ;//1.77245//
+
     sphere1.scale.set(s, s, s); //1
   }
   
@@ -333,16 +335,16 @@ function render() {
       sphere =  tempspheres[r].position; //.getWorldPosition(spheres[j].position);
       // const wpos1 = sphere1.getWorldPosition();
 
-      x1 = Math.round(sphere1.x*1e5); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
-      y1 = Math.round(sphere1.y*1e5); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
-      z1 = Math.round(sphere1.z*1e5); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
-      w1 = Math.round(posw[l]  *1e5); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
+      x1 = (sphere1.x*1e5); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
+      y1 = (sphere1.y*1e5); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
+      z1 = (sphere1.z*1e5); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
+      w1 = (posw[l]  *1e5); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
       const sph1 = new Vector4(x1, y1, z1, w1).normalize()
 
-      x = Math.round(sphere.x*1e5); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
-      y = Math.round(sphere.y*1e5); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
-      z = Math.round(sphere.z*1e5); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
-      w = Math.round(posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
+      x = (sphere.x*1e5); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
+      y = (sphere.y*1e5); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
+      z = (sphere.z*1e5); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
+      w = (posw[r] *1e5); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w).normalize();
       const s = size-1;let c = 299792548;
@@ -357,7 +359,7 @@ function render() {
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
       var midangle = (sph.length() * sph1.length())?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
-	mid= (mid!=0)?1-speck((mid**.5)):0//-((mid));
+	mid= (mid!=0)?sigdriv((mid*mid)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
@@ -372,7 +374,7 @@ function render() {
           //   0,-1,0,sphdis.w)
           // )
         .multiplyScalar(midangle*mid)
-	.divideScalar(s*1e0)
+	.divideScalar(1e0)
         // .setLength(1/mid)
  
       velx[l] = (velx[l] - (Math.round(sphdis.x*1e5)/1e5)); //sphdis.x)) / 1000; // * dis * s; //?dirx-.000001:dirx==0?0:dirx//+frnd(rot*dirx*s);//frnd(dix * s +
