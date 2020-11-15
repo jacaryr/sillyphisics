@@ -336,16 +336,16 @@ function render() {
       sphere =  tempspheres[r].position; //.getWorldPosition(spheres[j].position);
       // const wpos1 = sphere1.getWorldPosition();
 
-      x1 = Math.round(sphere1.x*1e4); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
-      y1 = Math.round(sphere1.y*1e4); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
-      z1 = Math.round(sphere1.z*1e4); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
-      w1 = Math.round(posw[l]  *1e4); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
+      x1 = Math.round(sphere1.x*1e3); //2*(sig((sphere1.x * 1e6) / 1e6)-.5);
+      y1 = Math.round(sphere1.y*1e3); //2*(sig((sphere1.y * 1e6) / 1e6)-.5);
+      z1 = Math.round(sphere1.z*1e3); //2*(sig((sphere1.z * 1e6) / 1e6)-.5);
+      w1 = Math.round(posw[l]  *1e3); //2*(sig((posw[i]   * 1e6) / 1e6)-.5); //*299792458;
       const sph1 = new Vector4(x1, y1, z1, w1)//.normalize()
 
-      x = Math.round(sphere.x*1e4); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
-      y = Math.round(sphere.y*1e4); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
-      z = Math.round(sphere.z*1e4); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
-      w = Math.round(posw[r] *1e4); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
+      x = Math.round(sphere.x*1e3); ////2*(sig((sphere.x * 1e6) / 1e6)-.5);
+      y = Math.round(sphere.y*1e3); ////2*(sig((sphere.y * 1e6) / 1e6)-.5);
+      z = Math.round(sphere.z*1e3); ////2*(sig((sphere.z * 1e6) / 1e6)-.5);
+      w = Math.round(posw[r] *1e3); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w)//.normalize();
       const s = size;let c = 299792548;
@@ -358,7 +358,7 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())!=0?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())!=0?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
 	mid=1// (mid!=0)?1-sigdriv((mid)):0//-((mid));
 	  
@@ -377,14 +377,14 @@ function render() {
         .multiplyScalar(midangle*1e0)
 	.divideScalar(s*(sphdis1.length())?sphdis1.length()**ga:1)
         // .setLength(1/mid) 
-        velx[l] = (velx[l] - (Math.round(sphdis.x*1e4)/1e4));
-	vely[l] = (vely[l] - (Math.round(sphdis.y*1e4)/1e4)); 
-	velz[l] = (velz[l] - (Math.round(sphdis.z*1e4)/1e4)); 
-	velw[l] = (velw[l] - (Math.round(sphdis.w*1e4)/1e4)); 
-	velx[r] = (velx[r] + (Math.round(sphdis.x*1e4)/1e4));
-	vely[r] = (vely[r] + (Math.round(sphdis.y*1e4)/1e4));
-	velz[r] = (velz[r] + (Math.round(sphdis.z*1e4)/1e4));
-	velw[r] = (velw[r] + (Math.round(sphdis.w*1e4)/1e4));
+        velx[l] = (velx[l] - (Math.round(sphdis.x*1e3)/1e3));
+	vely[l] = (vely[l] - (Math.round(sphdis.y*1e3)/1e3)); 
+	velz[l] = (velz[l] - (Math.round(sphdis.z*1e3)/1e3)); 
+	velw[l] = (velw[l] - (Math.round(sphdis.w*1e3)/1e3)); 
+	velx[r] = (velx[r] + (Math.round(sphdis.x*1e3)/1e3));
+	vely[r] = (vely[r] + (Math.round(sphdis.y*1e3)/1e3));
+	velz[r] = (velz[r] + (Math.round(sphdis.z*1e3)/1e3));
+	velw[r] = (velw[r] + (Math.round(sphdis.w*1e3)/1e3));
      // }1
     // mergedo(l, m);
     // mergedo(m +1, r);
