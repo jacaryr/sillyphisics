@@ -284,7 +284,7 @@ function render() {
   const scale = 1e0;
   var check = 0.01;
   for (let ndx1 = 0; ndx1 < size; ndx1++) {
-  s = .005
+  s = .00125
 
     sphere1 = spheres[ndx1];
     //  var  vx =velx[ndx1]+(Math.random()>.5?1:-1);
@@ -348,7 +348,7 @@ function render() {
       w = Math.round(posw[r] *1e3); //*(sig((posw[j]  * 1e6) / 1e6)-.5); //*299792458;
 
       const sph = new Vector4(x, y, z, w)//.normalize();
-      const s = size;let c = 299792548;
+      const s = size-1;let c = 299792548;
       var sphdis = new Vector4().subVectors(sph1, sph).normalize() //.normalize(); //.normalize()//
       var sphdis1 = new Vector4().subVectors(sph1, sph).normalize(); //.normalize()//
       var mid = (
@@ -358,13 +358,13 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())!=0?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())!=0?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
-	mid=1// (mid!=0)?1-sigdriv((mid)):0//-((mid));
+	mid=sphdis1.length()!==0?speck(sphdis1.length()**3):1// (mid!=0)?1-sigdriv((mid)):0//-((mid));
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
-
+	var pow =2
       sphdis
         
           // .applyMatrix4(
@@ -374,8 +374,12 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .multiplyScalar(midangle*1e0)
-	.divideScalar(s*(sphdis1.length())?sphdis1.length()**ga:1)
+        .set((sphdis1.x**pow!==0?1/(sphdis1.x**pow)**.5:0)*sphdis.x,
+	     (sphdis1.y**pow!==0?1/(sphdis1.y**pow)**.5:0)*sphdis.y,
+	     (sphdis1.z**pow!==0?1/(sphdis1.z**pow)**.5:0)*sphdis.z,
+	     (sphdis1.w**pow!==0?1/(sphdis1.w**pow)**.5:0)*sphdis.w)
+	.multiplyScalar(midangle*1e0)
+	.divideScalar(1*1e0)
         // .setLength(1/mid) 
         velx[l] = (velx[l] - (Math.round(sphdis.x*1e3)/1e3));
 	vely[l] = (vely[l] - (Math.round(sphdis.y*1e3)/1e3)); 
