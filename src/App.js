@@ -267,7 +267,7 @@ function animate() {
    setTimeout(function cb() {
   requestAnimationFrame(animate);
    }, 1000 / 60);
-opac+= opac<=64&&!sw?(1):(opac>=0)?(sw=true,-2):(sw=false);
+opac+= opac<=3&&!sw?(.1):(opac>=0)?(sw=true,-.1):(sw=false);
 
   // (1000 / 10) * step == false ? 2 : (step = false)
     // ,1
@@ -358,7 +358,7 @@ function render() {
       );
       const gr = (sqrt(5.0) + 1.0) / 2.0; // golden ratio = 1.6180339887498948482
       const ga = (2.0 - gr) * (2.0 * PI); // golden angle = 2.39996322972865332
-      var midangle = (sph.length() * sph1.length())!=0?Math.acos(-sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
+      var midangle = (sph.length() * sph1.length())!=0?Math.acos(sph1.dot(sph) /(sph.length() * sph1.length())):0//(sph.length() * sph1.length()));//arg(mid);
 	  midangle = midangle?midangle*(1/PI):0;
 	mid=sphdis1.length()!==0?speck(sphdis1.length()**3):1// (mid!=0)?1-sigdriv((mid)):0//-((mid));
 	  
@@ -378,7 +378,7 @@ function render() {
 	     (sphdis1.y**pow!==0?1/(sphdis1.y**pow)**.5:0)*sphdis.y,
 	     (sphdis1.z**pow!==0?1/(sphdis1.z**pow)**.5:0)*sphdis.z,
 	     (sphdis1.w**pow!==0?1/(sphdis1.w**pow)**.5:0)*sphdis.w)
-	.multiplyScalar(midangle*1e0)
+	.multiplyScalar(midangle*1e0*opac)
 	.divideScalar(1*1e0)
         // .setLength(1/mid) 
         velx[l] = (velx[l] - (Math.round(sphdis.x*1e3)/1e3));
