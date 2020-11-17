@@ -42,7 +42,7 @@ var posw = new Array(count).fill(0);
 // for (var j = 0; j < weight.length; j++)
 //   for (var i = 0; i < weight.length; i++) weight[j][i] = Math.random();
 var clicked = false;
-var switchcam = 2048;
+var switchcam = 16364
 var controls;
 const gravconst = 6.6741e-11;
 const angdif = (x, y) => x.dot(y) / (x.length() * y.length());
@@ -204,9 +204,9 @@ function init() {
           const phi = Math.atan2(jj, ii); //(i / countsplit) * PI; //Math.atan2(ii, -kk) * (Math.PI / 180);
           const theta = Math.atan2(rhat, kk);
           const time = parseInt(d.getTime());
-          tempsphere.position.x = 32 * ii*ll;
-          tempsphere.position.y = 32 * jj*ll;
-          tempsphere.position.z = 32 * kk*ll;
+          tempsphere.position.x = 32 * ii*l;
+          tempsphere.position.y = 32 * jj*l;
+          tempsphere.position.z = 32 * kk*l;
           posw[c++] = (32)*l//(l/(l+1))///( (((l)))); //((ii*jj*kk)%ll); //(256 / tempcount) * Math.abs(l); //abs((kk*jj*ii)%ll)//             (256 / (1)) * ((ii*jj*kk)%(ll)/1  ); // (count/1)*((ll*jj*kk*ii)%countsplit); //sign(ll*jj*kk*ii)%countsplit * (count/countsplit)*((ii*jj*kk)%count)//((ii*jj*kk)%c)>0?-256:256//(c%2)?256:-256
           // tempsphere.setScale(0);
           // tempsphere.castShadow = true;
@@ -267,7 +267,7 @@ function animate() {
    setTimeout(function cb() {
   requestAnimationFrame(animate);
    }, 1000 / 60);
-opac+= opac<=3&&!sw?(.1):(opac>=0)?(sw=true,-.1):(sw=false);
+opac+= opac<=64&&!sw?(1):(opac>=0)?(sw=true,-2):(sw=false);
 
   // (1000 / 10) * step == false ? 2 : (step = false)
     // ,1
@@ -364,7 +364,7 @@ function render() {
 	  
       // mid=(1/mid**2)
       // mid=mid==0?1:mid
-	var pow =2
+	var pow =1
       sphdis
         
           // .applyMatrix4(
@@ -374,11 +374,11 @@ function render() {
           //   -1,0,sphdis.z,0,
           //   0,-1,0,sphdis.w)
           // )
-        .set((sphdis1.x**pow!==0?1/(sphdis1.x**pow)**.5:0)*sphdis.x,
-	     (sphdis1.y**pow!==0?1/(sphdis1.y**pow)**.5:0)*sphdis.y,
-	     (sphdis1.z**pow!==0?1/(sphdis1.z**pow)**.5:0)*sphdis.z,
-	     (sphdis1.w**pow!==0?1/(sphdis1.w**pow)**.5:0)*sphdis.w)
-	.multiplyScalar(midangle*1e0*opac)
+        .set((sphdis1.x**pow!==0?1/Math.abs(sphdis1.x**pow)**.5:0)*sphdis.x,
+	     (sphdis1.y**pow!==0?1/Math.abs(sphdis1.y**pow)**.5:0)*sphdis.y,
+	     (sphdis1.z**pow!==0?1/Math.abs(sphdis1.z**pow)**.5:0)*sphdis.z,
+	     (sphdis1.w**pow!==0?1/Math.abs(sphdis1.w**pow)**.5:0)*sphdis.w)
+	.multiplyScalar(midangle*1e0)
 	.divideScalar(1*1e0)
         // .setLength(1/mid) 
         velx[l] = (velx[l] - (Math.round(sphdis.x*1e3)/1e3));
